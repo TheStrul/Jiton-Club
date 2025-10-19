@@ -370,22 +370,16 @@
         function checkFrontendConfig() {
             log('Checking frontend configuration...', 'info');
             
-            const useApi = CONFIG.features.useApi;
             const env = CONFIG.environment;
             
-            document.getElementById('useApiStatus').textContent = useApi ? '? Enabled' : '? Disabled';
+            document.getElementById('useApiStatus').textContent = '? API Service (Backend Connected)';
             document.getElementById('environment').textContent = env;
             
-            if (useApi) {
-                log('? API integration is enabled', 'success');
-            } else {
-                log('??  API integration is disabled (using MockService)', 'warning');
-            }
-            
+            log('? Using API Service - Backend integration active', 'success');
             log(`   Environment: ${env}`, 'info');
             log(`   API Base: ${CONFIG.API_BASE}`, 'info');
             
-            return useApi;
+            return true;
         }
         
         async function runAllTests() {
@@ -394,11 +388,6 @@
             
             // Check frontend config first
             const apiEnabled = checkFrontendConfig();
-            
-            if (!apiEnabled) {
-                log('??  API is disabled in config.js', 'warning');
-                log('   Set features.useApi = true to enable', 'warning');
-            }
             
             // Check backend API
             const apiOk = await checkBackendAPI();

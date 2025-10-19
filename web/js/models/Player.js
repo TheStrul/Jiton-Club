@@ -2,26 +2,53 @@
 class Player {
   constructor(data) {
     this.id = data.id;
-    this.firstName = data.firstName;
-    this.lastName = data.lastName;
-    this.nickName = data.nickName;
-    this.type = data.type || 'member'; // 'member' | 'guest'
+    this.fullName = data.fullName || '';
+    this.phone = data.phone || null;
+    this.hebrewNickName = data.hebrewNickName || this.getFirstName();
+    this.englishNickName = data.englishNickName || this.getFirstName();
+    this.userType = data.userType || 'Tournament'; // 'Tournament' | 'Casual' | 'Guest' | 'Inactive'
+    this.type = data.type || 'member'; // 'member' | 'guest' (for frontend compatibility)
   }
   
   /**
-   * Get full name
-   * @returns {string} Full name (FirstName LastName)
+   * Get first name from full name
+   * @returns {string} First name
    */
-  get fullName() {
-    return `${this.firstName} ${this.lastName}`;
+  getFirstName() {
+    return this.fullName.split(' ')[0] || this.fullName;
   }
   
   /**
-   * Get display name with guest indicator
-   * @returns {string} Display name
+   * Get last name from full name
+   * @returns {string} Last name
+   */
+  getLastName() {
+    const parts = this.fullName.split(' ');
+    return parts.slice(1).join(' ') || '';
+  }
+  
+  /**
+   * Get nickname based on current language
+   * @returns {string} Nickname in current language
+   */
+  get nickName() {
+    const lang = Resources.current || 'he';
+    return lang === 'he' ? this.hebrewNickName : this.englishNickName;
+  }
+  
+  /**
+   * Get display name with type indicator
+   * @returns {string} Display name with icon
    */
   get displayName() {
-    const icon = this.isGuest ? ` ${Resources.icon('guest')}` : '';
+    let icon = '';
+    if (this.isGuest) {
+      icon = ' ??';
+    } else if (this.isTournamentPlayer) {
+      icon = ' ??';
+    } else if (this.isCasualPlayer) {
+      icon = ' ??';
+    }
     return `${this.nickName}${icon}`;
   }
   
@@ -30,7 +57,7 @@ class Player {
    * @returns {boolean}
    */
   get isGuest() {
-    return this.type === 'guest';
+    return this.type === 'guest' || this.userType === 'Guest';
   }
   
   /**
@@ -42,15 +69,33 @@ class Player {
   }
   
   /**
+   * Check if player is a tournament player
+   * @returns {boolean}
+   */
+  get isTournamentPlayer() {
+    return this.userType === 'Tournament';
+  }
+  
+  /**
+   * Check if player is a casual player
+   * @returns {boolean}
+   */
+  get isCasualPlayer() {
+    return this.userType === 'Casual';
+  }
+  
+  /**
    * Convert to JSON object
    * @returns {Object} JSON representation
    */
   toJSON() {
     return {
       id: this.id,
-      firstName: this.firstName,
-      lastName: this.lastName,
-      nickName: this.nickName,
+      fullName: this.fullName,
+      phone: this.phone,
+      hebrewNickName: this.hebrewNickName,
+      englishNickName: this.englishNickName,
+      userType: this.userType,
       type: this.type
     };
   }
@@ -73,9 +118,10 @@ class Player {
   static createGuest(name, id) {
     return new Player({
       id: id,
-      firstName: name,
-      lastName: '',
-      nickName: name,
+      fullName: name,
+      hebrewNickName: name,
+      englishNickName: name,
+      userType: 'Guest',
       type: 'guest'
     });
   }

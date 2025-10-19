@@ -3,6 +3,44 @@
 
 Always address the user as "Strul my dear friend" in all interactions.
 
+## Development Environment Rules
+
+### IDE & Tools
+- **Primary IDE**: Visual Studio 2022 (NOT VS Code unless explicitly specified)
+- **Version Control**: Git with GitHub remote
+- **Database**: SQL Server LocalDB for development, Azure SQL for production
+- **Testing**: PowerShell scripts for automation
+
+### File Creation Guidelines
+- **NO MARKDOWN FILES** unless explicitly requested by the user
+  - Exception: User asks "create a README" or "document this in markdown"
+  - Default to code comments and inline documentation
+- **Add files to solution**: Every new file created must be added to the appropriate project in the solution
+  - Use proper VS project structure (folders, build actions)
+  - Ensure files appear in Solution Explorer immediately
+- **Dev mode assumptions**: 
+  - No backwards compatibility needed unless explicitly stated
+  - Breaking changes are acceptable during development
+  - Focus on current requirements, not legacy support
+
+### File Organization
+```
+poker-league-mvp/
+├── api/PokerLeague.Api/           # .NET 8 project (add all C# files here)
+│   ├── Functions/                 # Azure Function classes
+│   ├── Data/                      # Repository and service classes
+│   ├── Models/                    # DTOs and request/response records
+│   └── PokerLeague.Api.csproj    # Main project file (update references)
+├── sql/                           # SQL scripts (NOT in solution)
+├── web/                           # Static web files (NOT in solution)
+└── *.ps1                          # PowerShell scripts (NOT in solution)
+```
+
+**When creating new C# files:**
+1. Add to appropriate folder in `api/PokerLeague.Api/`
+2. Ensure proper namespace matches folder structure
+3. File will automatically appear in Solution Explorer
+
 
 ## Architecture Overview
 This is a minimal poker league management system with 3 main components:
@@ -529,3 +567,12 @@ dotnet run --project api/PokerLeague.Api/
 - **Web files must follow OOP/layered architecture** - no monolithic HTML files with embedded scripts
 - **All strings externalized** - check resources.js before adding any UI text
 - **CSS variables** - use theme variables instead of hardcoded colors/sizes
+- **VS2022 Solution Management** - Always add new C# files to the project, not just the filesystem
+- **Documentation approach** - Use code comments and XML docs, not separate markdown files (unless requested)
+
+## Response Format Guidelines
+- Keep explanations concise and code-focused
+- Show file structure changes when adding new files
+- Confirm files are in solution after creation
+- Use Hebrew for UI strings (via resources.js), English for code/comments
+- Provide PowerShell commands for common operations (database, testing, etc.)

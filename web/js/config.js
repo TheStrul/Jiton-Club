@@ -9,14 +9,17 @@ const CONFIG = {
   // Authentication
   auth: {
     enabled: true,
-    pin: '1234' // Change this to your desired 4-digit PIN
+    sessionCheckInterval: 300000, // 5 minutes
+    autoLogoutWarning: 60000, // 1 minute warning
+    cookieName: 'poker_session'
   },
   
   // Feature flags
   features: {
-    useApi: true, // ? ENABLED - Backend API is now running!
     autoSave: true,
-    validateDates: true
+    validateDates: true,
+    mockData: false, // Use mock data instead of API
+    debugMode: true
   },
   
   // Storage keys
@@ -24,7 +27,9 @@ const CONFIG = {
     rebuyData: 'rebuyData',
     gameData: 'currentGame',
     rebuyHistory: 'rebuyHistory',
-    gameHistory: 'pokerGames'
+    gameHistory: 'pokerGames',
+    sessionToken: 'poker_session_token',
+    userData: 'poker_user_data'
   },
   
   // Default values
@@ -42,3 +47,10 @@ const CONFIG = {
     customServer: true // Use custom Python server with UTF-8 support
   }
 };
+
+// Auto-detect production environment
+if (window.location.hostname !== 'localhost' && window.location.hostname !== '127.0.0.1') {
+  CONFIG.environment = 'production';
+  CONFIG.API_BASE = window.location.origin + '/api';
+  CONFIG.features.debugMode = false;
+}

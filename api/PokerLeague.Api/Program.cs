@@ -15,8 +15,10 @@ var host = new HostBuilder()
         var conn = Environment.GetEnvironmentVariable("SqlConnection") ?? 
                    ctx.Configuration.GetConnectionString("SqlConnection") ??
                    "Server=(localdb)\\MSSQLLocalDB;Database=PokerLeague;Trusted_Connection=True;TrustServerCertificate=True;";
+        
         services.AddSingleton(new SqlRepository(conn));
         services.AddSingleton<LeagueService>();
+        services.AddSingleton(new AuthService(conn));
     })
     .Build();
 

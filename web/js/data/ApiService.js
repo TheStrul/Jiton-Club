@@ -11,11 +11,23 @@ class ApiService extends DataService {
    */
   async getPlayers() {
     try {
-      const response = await fetch(`${this.baseUrl}/api/players`);
+      const response = await fetch(`${this.baseUrl}/api/players/active`);
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`);
       }
-      return await response.json();
+      const players = await response.json();
+      
+      // Map to our Player model format
+      return players.map(p => ({
+        id: p.PlayerId || p.playerId,
+        fullName: p.FullName || p.fullName,
+        phone: p.Phone || p.phone,
+        hebrewNickName: p.HebrewNickName || p.hebrewNickName || (p.FullName || p.fullName || '').split(' ')[0],
+        englishNickName: (p.FullName || p.fullName || '').split(' ')[0], // Extract first name as English nickname
+        userType: p.UserType || p.userType || 'Tournament', // 'Tournament' | 'Casual' | 'Guest' | 'Inactive'
+        type: 'member',
+        isActive: true
+      }));
     } catch (error) {
       console.error('Failed to fetch players:', error);
       throw error;
@@ -115,19 +127,15 @@ class ApiService extends DataService {
   }
 }
 
-// Service Factory - Creates appropriate service based on configuration
+// Service Factory - Creates API service instance
 const DataServiceFactory = {
   /**
-   * Create data service instance based on config
-   * @returns {DataService} Data service instance
+   * Create data service instance
+   * Always uses real API backend
+   * @returns {ApiService} API service instance
    */
   create() {
-    if (CONFIG.features.useApi) {
-      console.log('? Using API Service - Connected to backend');
-      return new ApiService(CONFIG.API_BASE);
-    }
-    
-    console.log('??  Using Mock Service - Local development mode (no backend)');
-    return new MockService();
+    console.log('? Using API Service - Connected to backend at ' + CONFIG.API_BASE);
+    return new ApiService(CONFIG.API_BASE);
   }
 };
