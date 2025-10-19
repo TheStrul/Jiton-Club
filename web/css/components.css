@@ -1,157 +1,349 @@
 /* Component-specific styles */
 
-/* Quick Select Buttons */
-.quick-select {
+/* Game Settings */
+.game-settings {
+  background: linear-gradient(135deg, rgba(255, 215, 0, 0.2), rgba(255, 215, 0, 0.1));
+  border: var(--border-width) solid var(--color-primary);
+  border-radius: var(--border-radius-lg);
+  padding: var(--spacing-lg);
+  margin-bottom: var(--spacing-lg);
+}
+
+.setting-item {
   display: flex;
+  align-items: center;
   gap: var(--spacing-md);
-  margin-bottom: var(--spacing-lg);
 }
 
-.quick-select button {
+.setting-item label {
+  font-size: var(--font-size-lg);
+  font-weight: bold;
+  color: var(--color-primary);
+}
+
+.buy-in-input {
   flex: 1;
+  max-width: 200px;
   padding: var(--spacing-md);
-  font-size: var(--font-size-md);
+  font-size: var(--font-size-xl);
   font-weight: bold;
-  border: var(--border-width) solid var(--color-card-border);
+  border: var(--border-width) solid var(--color-primary);
   border-radius: var(--border-radius);
-  background: var(--color-card-bg);
+  background: rgba(0, 0, 0, 0.4);
   color: var(--color-text-primary);
-  cursor: pointer;
-  transition: all var(--transition);
-  touch-action: manipulation;
+  text-align: center;
 }
 
-.quick-select button:active {
-  transform: scale(0.95);
+.buy-in-input:focus {
+  outline: none;
+  box-shadow: 0 0 15px rgba(255, 215, 0, 0.3);
 }
 
-/* Add Guest Button */
-.add-guest-btn {
-  width: 100%;
-  padding: var(--spacing-md);
+/* Unified Add Control - Single Dropdown + Two Buttons */
+.add-control-unified {
   margin-bottom: var(--spacing-lg);
-  font-size: var(--font-size-md);
-  font-weight: bold;
-  border: var(--border-width) dashed var(--color-info);
-  border-radius: var(--border-radius);
-  background: rgba(102, 126, 234, 0.1);
-  color: var(--color-info);
-  cursor: pointer;
-  transition: all var(--transition);
-  touch-action: manipulation;
-}
-
-.add-guest-btn:active {
-  transform: scale(0.95);
-  background: rgba(102, 126, 234, 0.2);
-}
-
-/* Players List */
-.players-list {
+  margin-top: var(--spacing-xl);
+  padding: var(--spacing-lg);
+  background: linear-gradient(135deg, var(--color-card-bg), rgba(255,255,255,0.05));
+  border: var(--border-width) solid var(--color-card-border);
+  border-radius: var(--border-radius-lg);
   display: flex;
   flex-direction: column;
   gap: var(--spacing-md);
-  margin-bottom: var(--spacing-xl);
 }
 
-/* Player Card */
-.player-card {
-  background: var(--color-card-bg);
+.player-select-unified {
+  width: 100%;
+  padding: var(--spacing-lg);
+  font-size: var(--font-size-lg);
+  border: var(--border-width) solid rgba(255, 215, 0, 0.5);
+  border-radius: var(--border-radius);
+  background: rgba(0, 0, 0, 0.4);
+  color: var(--color-text-primary);
+  font-weight: bold;
+  cursor: pointer;
+  transition: all var(--transition);
+}
+
+.player-select-unified:focus {
+  border-color: var(--color-primary);
+  box-shadow: 0 0 15px rgba(255, 215, 0, 0.3);
+}
+
+.player-select-unified option {
+  background: var(--color-background);
+  padding: var(--spacing-md);
+}
+
+.action-buttons {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--spacing-md);
+}
+
+.btn-action {
+  padding: var(--spacing-lg);
+  font-size: var(--font-size-md);
+  font-weight: bold;
+  border: none;
+  border-radius: var(--border-radius);
+  color: white;
+  cursor: pointer;
+  transition: all var(--transition);
+  box-shadow: var(--shadow);
+  white-space: nowrap;
+}
+
+.btn-action:active:not(:disabled) {
+  transform: scale(0.95);
+}
+
+.btn-action:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+  box-shadow: none;
+  filter: grayscale(0.5);
+}
+
+.btn-score {
+  background: linear-gradient(135deg, var(--color-info), var(--color-info-dark));
+}
+
+.btn-score:disabled {
+  background: linear-gradient(135deg, rgba(33, 150, 243, 0.3), rgba(21, 101, 192, 0.3));
+}
+
+.btn-rebuy {
+  background: linear-gradient(135deg, var(--color-success), var(--color-success-dark));
+}
+
+.btn-rebuy:disabled {
+  background: linear-gradient(135deg, rgba(76, 175, 80, 0.3), rgba(56, 142, 60, 0.3));
+}
+
+/* Legacy styles kept for compatibility */
+.add-controls-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--spacing-md);
+  margin-bottom: var(--spacing-lg);
+  margin-top: var(--spacing-xl);
+}
+
+.add-section-inline {
+  padding: var(--spacing-lg);
+  background: linear-gradient(135deg, var(--color-card-bg), rgba(255,255,255,0.05));
   border: var(--border-width) solid var(--color-card-border);
+  border-radius: var(--border-radius-lg);
+}
+
+.add-section-inline h3 {
+  font-size: var(--font-size-md);
+  color: var(--color-primary);
+  margin-bottom: var(--spacing-sm);
+  font-weight: bold;
+  text-align: center;
+}
+
+.add-section {
+  margin-bottom: var(--spacing-xl);
+  padding: var(--spacing-lg);
+  background: linear-gradient(135deg, var(--color-card-bg), rgba(255,255,255,0.05));
+  border: var(--border-width) solid var(--color-card-border);
+  border-radius: var(--border-radius-lg);
+}
+
+.add-section h3 {
+  font-size: var(--font-size-lg);
+  color: var(--color-primary);
+  margin-bottom: var(--spacing-md);
+  font-weight: bold;
+}
+
+.add-controls {
+  display: flex;
+  gap: var(--spacing-sm);
+  align-items: center;
+}
+
+.player-select {
+  flex: 1;
+  padding: var(--spacing-md);
+  font-size: var(--font-size-md);
+  border: var(--border-width) solid rgba(255, 215, 0, 0.5);
+  border-radius: var(--border-radius);
+  background: rgba(0, 0, 0, 0.4);
+  color: var(--color-text-primary);
+  font-weight: bold;
+  cursor: pointer;
+  transition: all var(--transition);
+}
+
+.player-select:focus {
+  border-color: var(--color-primary);
+  box-shadow: 0 0 15px rgba(255, 215, 0, 0.3);
+}
+
+.player-select option {
+  background: var(--color-background);
+  padding: var(--spacing-md);
+}
+
+.btn-add {
+  padding: var(--spacing-md) var(--spacing-lg);
+  font-size: var(--font-size-md);
+  font-weight: bold;
+  border: none;
+  border-radius: var(--border-radius);
+  background: linear-gradient(135deg, var(--color-success), var(--color-success-dark));
+  color: white;
+  cursor: pointer;
+  transition: all var(--transition);
+  white-space: nowrap;
+  box-shadow: var(--shadow);
+}
+
+.btn-add:active {
+  transform: scale(0.95);
+}
+
+/* Entry Lists */
+.entry-list {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-md);
+  margin-bottom: var(--spacing-lg);
+}
+
+/* Entry Cards - Compact Design */
+.entry-card {
+  background: linear-gradient(135deg, var(--color-card-bg), rgba(255,255,255,0.05));
+  border: var(--border-width) solid rgba(255, 215, 0, 0.3);
   border-radius: var(--border-radius);
   padding: var(--spacing-md);
   transition: all var(--transition);
-  cursor: pointer;
-  user-select: none;
 }
 
-.player-card:active {
-  transform: scale(0.98);
-}
-
-.player-card.selected {
+.entry-card:hover {
   background: var(--color-card-bg-hover);
-  border-color: var(--color-success);
-  box-shadow: 0 0 15px rgba(76, 175, 80, 0.3);
+  border-color: rgba(255, 215, 0, 0.5);
 }
 
-.player-checkbox {
+.entry-card.editing {
+  border-color: var(--color-primary);
+  box-shadow: 0 0 15px rgba(255, 215, 0, 0.3);
+}
+
+/* Compact Header with Inline Checkbox */
+.entry-header-compact {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: var(--spacing-sm);
+}
+
+.entry-name-section {
+  flex: 1;
   display: flex;
   align-items: center;
   gap: var(--spacing-sm);
-  margin-bottom: var(--spacing-sm);
   cursor: pointer;
+  padding: var(--spacing-xs);
+  border-radius: var(--border-radius-sm);
+  transition: background var(--transition);
 }
 
-.player-checkbox input[type="checkbox"] {
-  width: 24px;
-  height: 24px;
+.entry-name-section:hover {
+  background: rgba(255, 215, 0, 0.1);
+}
+
+/* Inline Paid Checkbox */
+.paid-checkbox-inline {
+  width: 20px;
+  height: 20px;
   cursor: pointer;
   accent-color: var(--color-success);
+  margin: 0;
 }
 
-.player-checkbox label {
-  flex: 1;
+.paid-label-inline {
+  cursor: pointer;
+  font-size: var(--font-size-lg);
+  margin: 0;
+  user-select: none;
+}
+
+.entry-player-name-compact {
   font-size: var(--font-size-lg);
   font-weight: bold;
-  cursor: pointer;
+  color: var(--color-text-primary);
+  flex: 1;
 }
 
-.remove-guest-btn {
-  padding: var(--spacing-sm);
+/* Rebuy Type Badge */
+.rebuy-type-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--spacing-xs);
+  padding: var(--spacing-xs) var(--spacing-sm);
+  background: rgba(76, 175, 80, 0.2);
+  border: 1px solid rgba(76, 175, 80, 0.4);
+  border-radius: var(--border-radius-sm);
+  font-size: var(--font-size-sm);
+  font-weight: bold;
+  color: var(--color-success);
+}
+
+/* Remove Button - Compact */
+.remove-entry-btn-compact {
+  padding: var(--spacing-xs) var(--spacing-sm);
   background: rgba(244, 67, 54, 0.8);
   border: none;
   border-radius: var(--border-radius-sm);
-  font-size: var(--font-size-md);
+  font-size: var(--font-size-sm);
   cursor: pointer;
   color: white;
-  touch-action: manipulation;
   transition: all var(--transition);
 }
 
-.remove-guest-btn:active {
+.remove-entry-btn-compact:active {
   background: var(--color-danger);
   transform: scale(0.9);
 }
 
-/* Player Details */
-.player-details {
-  border-top: 1px solid var(--color-card-border);
+/* Collapsible Edit Section */
+.entry-edit-section {
+  margin-top: var(--spacing-md);
   padding-top: var(--spacing-md);
-  margin-top: var(--spacing-sm);
+  border-top: 1px solid rgba(255, 215, 0, 0.2);
+  animation: slideDown 0.2s ease-out;
 }
 
-.rebuy-section {
-  margin-bottom: var(--spacing-md);
+@keyframes slideDown {
+  from {
+    opacity: 0;
+    max-height: 0;
+  }
+  to {
+    opacity: 1;
+    max-height: 200px;
+  }
 }
 
-.rebuy-label {
-  display: block;
-  font-size: var(--font-size-sm);
-  color: var(--color-text-secondary);
-  margin-bottom: var(--spacing-sm);
-  font-weight: bold;
-}
-
-/* Rebuy Types */
-.rebuy-types {
-  display: grid;
-  grid-template-columns: repeat(4, 1fr);
+/* Rebuy Type Selector - Compact */
+.rebuy-type-selector-compact {
+  display: flex;
   gap: var(--spacing-sm);
+  flex-wrap: wrap;
 }
 
-.rebuy-type-option {
-  position: relative;
-}
-
-.rebuy-type-option input[type="radio"] {
+.rebuy-type-selector-compact input[type="radio"] {
   display: none;
 }
 
-.rebuy-type-label {
-  display: block;
-  padding: var(--spacing-sm);
-  text-align: center;
+.rebuy-type-label-inline {
+  display: inline-block;
+  padding: var(--spacing-sm) var(--spacing-md);
   font-size: var(--font-size-sm);
   font-weight: bold;
   border: var(--border-width) solid var(--color-card-border);
@@ -159,53 +351,54 @@
   background: rgba(0, 0, 0, 0.3);
   cursor: pointer;
   transition: all var(--transition);
-  touch-action: manipulation;
   user-select: none;
 }
 
-.rebuy-type-option input[type="radio"]:checked + .rebuy-type-label {
+.rebuy-type-selector-compact input[type="radio"]:checked + .rebuy-type-label-inline {
   background: linear-gradient(135deg, var(--color-success), var(--color-success-dark));
   border-color: var(--color-success);
   box-shadow: 0 0 10px rgba(76, 175, 80, 0.4);
   transform: scale(1.05);
 }
 
-.rebuy-type-label:active {
+.rebuy-type-label-inline:active {
   transform: scale(0.95);
 }
 
-/* Player Inputs */
-.player-inputs {
-  display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: var(--spacing-md);
+/* Score Card Specific */
+.score-details {
+  margin-top: var(--spacing-md);
+  padding-top: var(--spacing-md);
+  border-top: 1px solid rgba(255, 215, 0, 0.2);
 }
 
-.input-box {
+.position-input-wrapper-compact {
   display: flex;
-  flex-direction: column;
-  gap: var(--spacing-xs);
+  align-items: center;
+  gap: var(--spacing-sm);
 }
 
-.input-box label {
+.position-input-wrapper-compact label {
   font-size: var(--font-size-sm);
   color: var(--color-text-secondary);
   font-weight: 600;
+  min-width: 50px;
 }
 
-.input-box input {
-  padding: var(--spacing-md);
-  font-size: var(--font-size-lg);
+.position-input-compact {
+  flex: 1;
+  max-width: 100px;
+  padding: var(--spacing-sm) var(--spacing-md);
+  font-size: var(--font-size-md);
   font-weight: bold;
   border: var(--border-width) solid rgba(255, 215, 0, 0.3);
   border-radius: var(--border-radius-sm);
   background: rgba(0, 0, 0, 0.4);
   color: var(--color-text-primary);
   text-align: center;
-  transition: all var(--transition);
 }
 
-.input-box input:focus {
+.position-input-compact:focus {
   outline: none;
   border-color: var(--color-primary);
   box-shadow: 0 0 10px rgba(255, 215, 0, 0.3);
@@ -234,7 +427,7 @@
 
 .summary-grid {
   display: grid;
-  grid-template-columns: repeat(2, 1fr);
+  grid-template-columns: repeat(3, 1fr);
   gap: var(--spacing-md);
   text-align: center;
 }
@@ -257,76 +450,6 @@
   font-size: var(--font-size-sm);
   color: var(--color-text-secondary);
   line-height: 1.2;
-}
-
-/* Player Selector */
-.player-selector {
-  display: flex;
-  flex-direction: column;
-  gap: var(--spacing-md);
-}
-
-.player-selector select {
-  padding: var(--spacing-lg);
-  font-size: var(--font-size-lg);
-  border: var(--border-width-thick) solid rgba(255, 215, 0, 0.5);
-  border-radius: var(--border-radius);
-  background: rgba(0, 0, 0, 0.4);
-  color: var(--color-text-primary);
-  font-weight: bold;
-  cursor: pointer;
-  touch-action: manipulation;
-  transition: all var(--transition);
-}
-
-.player-selector select:focus {
-  border-color: var(--color-primary);
-  box-shadow: 0 0 15px rgba(255, 215, 0, 0.3);
-}
-
-.player-selector option {
-  background: var(--color-background);
-  padding: var(--spacing-md);
-}
-
-/* Rebuy List */
-.rebuy-list {
-  display: flex;
-  flex-direction: column;
-  gap: var(--spacing-md);
-  margin-bottom: var(--spacing-xl);
-}
-
-.rebuy-item {
-  background: linear-gradient(135deg, var(--color-card-bg), rgba(255,255,255,0.05));
-  border: var(--border-width-thick) solid rgba(255, 215, 0, 0.3);
-  border-radius: var(--border-radius-lg);
-  padding: var(--spacing-lg);
-  position: relative;
-  transition: all var(--transition);
-}
-
-.rebuy-item:hover {
-  background: var(--color-card-bg-hover);
-}
-
-.rebuy-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: var(--spacing-md);
-  padding-bottom: var(--spacing-md);
-  border-bottom: var(--border-width) solid rgba(255, 215, 0, 0.2);
-}
-
-.rebuy-player-name {
-  font-size: var(--font-size-xl);
-  font-weight: bold;
-  color: var(--color-primary);
-}
-
-.rebuy-player-name.guest {
-  color: var(--color-info);
 }
 
 /* Buttons */
@@ -356,16 +479,6 @@
   color: white;
 }
 
-.btn-secondary {
-  background: linear-gradient(135deg, var(--color-info), var(--color-info-dark));
-  color: white;
-}
-
-.btn-danger {
-  background: linear-gradient(135deg, var(--color-danger), var(--color-danger-dark));
-  color: white;
-}
-
 .btn:disabled {
   opacity: 0.5;
   cursor: not-allowed;
@@ -374,25 +487,6 @@
 .btn.saving {
   opacity: 0.6;
   pointer-events: none;
-}
-
-/* Remove button */
-.remove-btn {
-  padding: var(--spacing-sm) var(--spacing-md);
-  background: rgba(244, 67, 54, 0.8);
-  border: none;
-  border-radius: var(--border-radius-sm);
-  font-size: var(--font-size-md);
-  cursor: pointer;
-  color: white;
-  font-weight: bold;
-  touch-action: manipulation;
-  transition: all var(--transition);
-}
-
-.remove-btn:active {
-  background: var(--color-danger);
-  transform: scale(0.95);
 }
 
 /* Message/Toast */
@@ -513,44 +607,117 @@
   transform: scale(0.95);
 }
 
-/* Empty State */
-.empty-state {
-  text-align: center;
-  padding: calc(var(--spacing-lg) * 2) var(--spacing-lg);
-  color: var(--color-text-disabled);
-  font-size: var(--font-size-md);
+/* Section Title */
+.section-title {
+  font-size: var(--font-size-xl);
+  color: var(--color-primary);
+  margin: var(--spacing-xl) 0 var(--spacing-md) 0;
+  padding: var(--spacing-md);
+  background: linear-gradient(135deg, rgba(255, 215, 0, 0.2), rgba(255, 215, 0, 0.1));
+  border-radius: var(--border-radius);
+  border-right: 5px solid var(--color-primary);
+  font-weight: bold;
+  text-shadow: 1px 1px 3px rgba(0,0,0,0.5);
 }
 
-.empty-state-icon {
-  font-size: var(--font-size-huge);
-  margin-bottom: var(--spacing-md);
-  opacity: 0.5;
-}
-
-/* Loading spinner */
-@keyframes spin {
-  0% { transform: rotate(0deg); }
-  100% { transform: rotate(360deg); }
-}
-
-.spinner {
-  border: 4px solid rgba(255, 215, 0, 0.3);
-  border-top: 4px solid var(--color-primary);
-  border-radius: 50%;
-  width: 40px;
-  height: 40px;
-  animation: spin 1s linear infinite;
-  margin: var(--spacing-lg) auto;
+/* Hidden utility */
+.hidden {
+  display: none !important;
 }
 
 /* Responsive adjustments */
 @media (max-width: 600px) {
-  .rebuy-types {
-    grid-template-columns: repeat(2, 1fr);
+  .summary-grid {
+    grid-template-columns: 1fr;
+    gap: var(--spacing-sm);
   }
   
-  .rebuy-type-label {
-    font-size: var(--font-size-xs);
-    padding: var(--spacing-xs);
+  .action-buttons {
+    grid-template-columns: 1fr;
   }
+  
+  .add-controls-row {
+    grid-template-columns: 1fr;
+  }
+  
+  .add-controls {
+    flex-direction: column;
+  }
+  
+  .btn-add {
+    width: 100%;
+  }
+  
+  .rebuy-type-selector-compact {
+    flex-direction: column;
+  }
+  
+  .rebuy-type-label-inline {
+    width: 100%;
+    text-align: center;
+  }
+  
+  .entry-name-section {
+    flex-wrap: wrap;
+  }
+  
+  .rebuy-type-badge {
+    order: 3;
+    width: 100%;
+    justify-content: center;
+  }
+}
+
+/* Drag Handle for Score Cards */
+.drag-handle {
+  cursor: grab;
+  padding: var(--spacing-xs) var(--spacing-md);
+  background: rgba(255, 215, 0, 0.2);
+  border-radius: var(--border-radius-sm);
+  font-weight: bold;
+  color: var(--color-primary);
+  user-select: none;
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-xs);
+  min-width: 60px;
+}
+
+.drag-handle:active {
+  cursor: grabbing;
+}
+
+/* Score Card Dragging States */
+.score-card.dragging {
+  opacity: 0.5;
+  transform: rotate(2deg);
+  cursor: grabbing;
+}
+
+.score-card.drag-over {
+  border-color: var(--color-primary);
+  background: rgba(255, 215, 0, 0.1);
+  transform: scale(1.02);
+  box-shadow: 0 0 20px rgba(255, 215, 0, 0.5);
+}
+
+.score-card {
+  transition: all 0.2s ease;
+  cursor: move;
+}
+
+.score-card:not(.dragging):hover .drag-handle {
+  background: rgba(255, 215, 0, 0.3);
+}
+
+/* Score Header Full Width */
+.score-header-full {
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  gap: var(--spacing-sm);
+  align-items: center;
+}
+
+.score-header-full .entry-name-section {
+  cursor: default;
 }

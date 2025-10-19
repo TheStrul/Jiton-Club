@@ -36,10 +36,22 @@
       <div class="date" id="currentDate"></div>
     </div>
 
+    <!-- Game Settings -->
+    <div class="game-settings">
+      <div class="setting-item">
+        <label id="buyInLabel"><!-- From JS --></label>
+        <input type="number" id="buyInAmount" value="200" step="50" min="0" class="buy-in-input">
+      </div>
+    </div>
+
     <!-- Summary Box -->
     <div class="summary-box">
       <div class="summary-title" id="summaryTitle"><!-- From JS --></div>
       <div class="summary-grid">
+        <div class="summary-item">
+          <div class="value" id="totalEntries">0</div>
+          <div class="label" id="totalEntriesLabel"><!-- From JS --></div>
+        </div>
         <div class="summary-item">
           <div class="value" id="totalPlayers">0</div>
           <div class="label" id="totalPlayersLabel"><!-- From JS --></div>
@@ -51,18 +63,36 @@
       </div>
     </div>
 
-    <!-- Quick Select Buttons -->
-    <div class="quick-select">
-      <button onclick="selectAll()" id="selectAllBtn"><!-- From JS --></button>
-      <button onclick="clearAll()" id="clearAllBtn"><!-- From JS --></button>
+    <!-- Score List (TOP) -->
+    <div id="scoreSection" class="hidden">
+      <div class="section-title" id="scoreListTitle"><!-- From JS --></div>
+      <div class="entry-list" id="scoreList">
+        <!-- Populated by JS -->
+      </div>
     </div>
 
-    <!-- Add Guest Button -->
-    <button class="add-guest-btn" onclick="addGuest()" id="addGuestBtn"><!-- From JS --></button>
+    <!-- Rebuy List (MIDDLE) -->
+    <div id="rebuySection" class="hidden">
+      <div class="section-title" id="rebuyListTitle"><!-- From JS --></div>
+      <div class="entry-list" id="rebuyList">
+        <!-- Populated by JS -->
+      </div>
+    </div>
 
-    <!-- Players List -->
-    <div class="players-list" id="playersList">
-      <!-- Populated by JS -->
+    <!-- Single Add Control (BOTTOM) -->
+    <div class="add-control-unified">
+      <select id="playerSelect" class="player-select-unified">
+        <option value="" id="playerSelectPlaceholder"><!-- From JS --></option>
+        <!-- Populated by JS -->
+      </select>
+      <div class="action-buttons">
+        <button class="btn-action btn-score" onclick="addScore()" id="addScoreBtn">
+          <!-- Text from JS -->
+        </button>
+        <button class="btn-action btn-rebuy" onclick="addRebuy()" id="addRebuyBtn">
+          <!-- Text from JS -->
+        </button>
+      </div>
     </div>
 
     <!-- Actions -->

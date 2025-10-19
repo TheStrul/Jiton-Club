@@ -85,7 +85,7 @@ const Resources = {
     rebuyTypes: {
       regular: 'רגיל',
       house: 'בית',
-      dotke: 'דוטקה'
+      dotke: 'דותקה'
     }
   },
   en: {

@@ -5,13 +5,18 @@ const Resources = {
             gameRecorder: 'רישום משחק',
             rebuyRecorder: 'רישום ריביי',
             rebuyList: 'רשימת ריביי',
+            scoreList: 'רשימת תוצאות',
             playerSelection: 'בחירת שחקנים',
             summary: 'סיכום',
-            gameSummary: 'סיכום משחק'
+            gameSummary: 'סיכום משחק',
+            addRebuy: 'הוסף רשומת ריביי',
+            addScore: 'הוסף רשומת תוצאה',
+            playersList: 'שחקנים במשחק'
         },
         sections: {
             addPlayer: 'הוסף שחקן לרשימת ריביי',
             rebuyListTitle: 'רשימת ריביי',
+            scoreListTitle: 'רשימת תוצאות',
             playersTonight: 'שחקנים הערב'
         },
         buttons: {
@@ -25,7 +30,9 @@ const Resources = {
             selectAll: 'סמן הכל',
             clearAll: 'נקה הכל',
             finished: 'סיימתי - שמור',
-            addGuest: 'הוסף אורח'
+            addGuest: 'הוסף אורח',
+            addRebuy: '🔄 הוסף רשומת ריביי',
+            addScore: '🏆 הוסף רשומת תוצאה'
         },
         labels: {
             selectPlayer: 'בחר שחקן',
@@ -35,20 +42,25 @@ const Resources = {
             payment: 'כמה שילם?',
             position: 'מקום',
             totalPlayers: 'שחקנים',
+            totalEntries: 'כניסות',
             totalMoney: 'סך כסף',
             totalRebuys: 'שחקנים עם ריביי',
-            rebuyBreakdown: 'רגיל/בית/דוטקה',
-            noRebuy: 'ללא ריביי'
+            rebuyBreakdown: 'רגיל/בית/דותקה',
+            noRebuy: 'ללא ריביי',
+            buyIn: 'מחיר כניסה (Buy-In)',
+            paid: 'שולם'
         },
         rebuyTypes: {
             none: 'ללא',
             regular: 'רגיל',
             house: 'בית',
-            dotke: 'דוטקה'
+            dotke: 'דותקה'
         },
         messages: {
             playerAdded: '{name} נוסף לרשימה',
             guestAdded: '{name} נוסף כאורח',
+            rebuyAdded: 'ריביי נוסף ל-{name}',
+            scoreAdded: 'תוצאה נוספה ל-{name}',
             rebuysSaved: 'ריביי נשמרו! ממשיך לרישום תוצאות...',
             gameSaved: 'המשחק נשמר בהצלחה!',
             dataSaved: 'הנתונים נשמרו ונשלחו!',
@@ -61,22 +73,27 @@ const Resources = {
             playerAlreadyInList: 'שחקן כבר ברשימה',
             noGuestName: 'הזן שם אורח',
             noPlayers: 'אין שחקנים נבחרים!',
+            noEntries: 'לא נוספו כניסות!',
             copyFailed: 'שגיאה בהעתקה'
         },
         confirmations: {
             removePlayer: 'האם להסיר שחקן זה מרשימת הריביי?',
+            removeEntry: 'האם להסיר רשומה זו?',
             clearAll: 'האם לנקות את כל הנתונים?',
             continueWithoutRebuys: 'לא נוספו ריביי. להמשך ללא ריביי?',
             removeGuest: 'האם להסיר אורח זה?'
         },
         placeholders: {
-            selectPlayer: '-- בחר שחקן --',
+            selectPlayer: 'בחר שחקן או אורח...',
+            selectPlayerForRebuy: 'בחר שחקן להוספת ריביי',
+            selectPlayerForScore: 'בחר שחקן להוספת תוצאה',
             newGuest: 'אורח חדש...',
             enterGuestName: 'הזן שם האורח',
             positionPlaceholder: '-'
         },
         emptyStates: {
-            noRebuys: 'עדיין לא נוספו שחקנים לרשימת הריביי',
+            noRebuys: 'עדיין לא נוספו ריביים',
+            noScores: 'עדיין לא נוספו תוצאות',
             noPlayers: 'אין שחקנים'
         },
         icons: {

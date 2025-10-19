@@ -1,4 +1,4 @@
-// UI Helper functions
+﻿// UI Helper functions
 const UI = {
   /**
    * Show a temporary message to the user
@@ -28,7 +28,7 @@ const UI = {
    * @returns {string} Formatted currency string
    */
   formatCurrency(amount) {
-    return `?${amount.toLocaleString('he-IL')}`;
+    return `₪${amount.toLocaleString('he-IL')}`;
   },
   
   /**

@@ -1,38 +1,29 @@
-// Integrated Game Recorder Application Controller
+// Simplified Game Recorder - Separate Rebuy/Score Lists
 class GameRecorderApp {
   constructor() {
     this.dataService = DataServiceFactory.create();
-    this.gameData = {}; // { playerId: { player, rebuyType, payment, position, playing } }
+    this.rebuys = []; // Array of { id, player, type, paid }
+    this.scores = []; // Array of { id, player, position, paid }
+    this.buyInAmount = 200;
+    this.nextEntryId = 1;
     this.nextGuestId = 1001;
     this.players = [];
+    this.editingEntryId = null; // Track which card is being edited
     
     this.init();
   }
   
   async init() {
     try {
-      // Initialize UI text from resources
       this.initializeUIText();
-      
-      // Set current date
       this.updateDateDisplay();
-      
-      // Load players
       await this.loadPlayers();
-      
-      // Initialize game data for all players
-      this.initializeGameData();
-      
-      // Load saved game data
+      this.populateDropdowns();
       this.loadFromStorage();
-      
-      // Render initial state
-      this.renderPlayers();
+      this.renderRebuys();
+      this.renderScores();
       this.updateSummary();
-      
-      // Setup event listeners
       this.setupEventListeners();
-      
     } catch (error) {
       console.error('Initialization failed:', error);
       UI.showMessage('Failed to initialize app: ' + error.message, 'error');
@@ -42,52 +33,29 @@ class GameRecorderApp {
   initializeUIText() {
     try {
       document.title = Resources.get('titles.gameRecorder');
-      const pageTitle = DOM.$('pageTitle');
-      if (pageTitle) pageTitle.textContent = `${Resources.icon('game')} ${Resources.get('titles.gameRecorder')} ${Resources.icon('game')}`;
-      
-      const summaryTitle = DOM.$('summaryTitle');
-      if (summaryTitle) summaryTitle.textContent = `${Resources.icon('stats')} ${Resources.get('titles.gameSummary')}`;
-      
-      const totalPlayersLabel = DOM.$('totalPlayersLabel');
-      if (totalPlayersLabel) totalPlayersLabel.textContent = Resources.get('labels.totalPlayers');
-      
-      const totalMoneyLabel = DOM.$('totalMoneyLabel');
-      if (totalMoneyLabel) totalMoneyLabel.textContent = Resources.get('labels.totalMoney');
-      
-      const selectAllBtn = DOM.$('selectAllBtn');
-      if (selectAllBtn) selectAllBtn.textContent = `${Resources.icon('check')} ${Resources.get('buttons.selectAll')}`;
-      
-      const clearAllBtn = DOM.$('clearAllBtn');
-      if (clearAllBtn) clearAllBtn.textContent = `${Resources.icon('cross')} ${Resources.get('buttons.clearAll')}`;
-      
-      const addGuestBtn = DOM.$('addGuestBtn');
-      if (addGuestBtn) addGuestBtn.textContent = `${Resources.icon('plus')} ${Resources.get('buttons.addGuest')}`;
-      
-      const saveBtn = DOM.$('saveBtn');
-      if (saveBtn) saveBtn.textContent = `${Resources.icon('check')} ${Resources.get('buttons.finished')}`;
-      
-      // Modal
-      const modalTitle = DOM.$('modalTitle');
-      if (modalTitle) modalTitle.textContent = `${Resources.icon('guest')} ${Resources.get('buttons.addGuest')}`;
-      
-      const guestNameInput = DOM.$('guestNameInput');
-      if (guestNameInput) guestNameInput.placeholder = Resources.get('placeholders.enterGuestName');
-      
-      const confirmBtn = DOM.$$('.modal-btn.confirm');
-      if (confirmBtn) confirmBtn.textContent = Resources.get('buttons.confirm');
-      
-      const cancelBtn = DOM.$$('.modal-btn.cancel');
-      if (cancelBtn) cancelBtn.textContent = Resources.get('buttons.cancel');
+      DOM.$('pageTitle').textContent = `${Resources.icon('game')} ${Resources.get('titles.gameRecorder')} ${Resources.icon('game')}`;
+      DOM.$('summaryTitle').textContent = `${Resources.icon('stats')} ${Resources.get('titles.gameSummary')}`;
+      DOM.$('totalEntriesLabel').textContent = Resources.get('labels.totalEntries');
+      DOM.$('totalPlayersLabel').textContent = Resources.get('labels.totalPlayers');
+      DOM.$('totalMoneyLabel').textContent = Resources.get('labels.totalMoney');
+      DOM.$('buyInLabel').textContent = Resources.get('labels.buyIn');
+      DOM.$('rebuyListTitle').textContent = `${Resources.icon('money')} ${Resources.get('sections.rebuyListTitle')}`;
+      DOM.$('scoreListTitle').textContent = `${Resources.icon('trophy')} ${Resources.get('sections.scoreListTitle')}`;
+      DOM.$('playerSelectPlaceholder').textContent = Resources.get('placeholders.selectPlayer');
+      DOM.$('addRebuyBtn').textContent = Resources.get('buttons.addRebuy');
+      DOM.$('addScoreBtn').textContent = Resources.get('buttons.addScore');
+      DOM.$('saveBtn').textContent = `${Resources.icon('check')} ${Resources.get('buttons.finished')}`;
+      DOM.$('modalTitle').textContent = `${Resources.icon('guest')} ${Resources.get('buttons.addGuest')}`;
+      DOM.$('guestNameInput').placeholder = Resources.get('placeholders.enterGuestName');
+      DOM.$$('.modal-btn.confirm').textContent = Resources.get('buttons.confirm');
+      DOM.$$('.modal-btn.cancel').textContent = Resources.get('buttons.cancel');
     } catch (error) {
       console.error('Failed to initialize UI text:', error);
     }
   }
   
   updateDateDisplay() {
-    const dateElement = DOM.$('currentDate');
-    if (dateElement) {
-      dateElement.textContent = UI.formatDate(new Date());
-    }
+    DOM.$('currentDate').textContent = UI.formatDate(new Date());
   }
   
   async loadPlayers() {
@@ -100,64 +68,136 @@ class GameRecorderApp {
     }
   }
   
-  initializeGameData() {
-    // Initialize all club members with default values
-    this.players.forEach(player => {
-      this.gameData[player.id] = {
-        player: player,
-        playing: false,
-        rebuyType: 'none',
-        payment: 200,
-        position: ''
-      };
-    });
+  populateDropdowns() {
+    const select = DOM.$('playerSelect');
+    
+    if (select) {
+      this.players.forEach(player => {
+        const option = document.createElement('option');
+        option.value = player.id;
+        option.textContent = player.nickName;
+        select.appendChild(option);
+      });
+      
+      // Add guest option
+      const guestOption = document.createElement('option');
+      guestOption.value = 'guest';
+      guestOption.textContent = `${Resources.icon('guest')} ${Resources.get('placeholders.newGuest')}`;
+      select.appendChild(guestOption);
+    }
   }
   
   setupEventListeners() {
-    // Enter key in guest modal
-    const guestInput = DOM.$('guestNameInput');
-    if (guestInput) {
-      guestInput.addEventListener('keypress', (e) => {
-        if (e.key === 'Enter') {
-          this.confirmGuest();
-        }
-      });
-    }
+    const buyInInput = DOM.$('buyInAmount');
+    const playerSelect = DOM.$('playerSelect');
+    const addScoreBtn = DOM.$('addScoreBtn');
+    const addRebuyBtn = DOM.$('addRebuyBtn');
     
-    // Prevent accidental page refresh
-    window.addEventListener('beforeunload', (e) => {
-      const playingPlayers = Object.values(this.gameData).filter(p => p.playing);
-      if (playingPlayers.length > 0) {
-        e.preventDefault();
-        e.returnValue = '';
-      }
+    buyInInput.addEventListener('change', (e) => {
+      this.buyInAmount = parseInt(e.target.value) || 200;
+      this.autoSave();
+      this.updateSummary();
     });
-  }
-  
-  addGuest() {
-    this.openGuestModal();
-  }
-  
-  openGuestModal() {
-    const modal = DOM.$('guestModal');
-    const input = DOM.$('guestNameInput');
     
-    if (modal && input) {
-      modal.classList.add('active');
-      input.value = '';
-      setTimeout(() => input.focus(), 100);
+    DOM.$('guestNameInput').addEventListener('keypress', (e) => {
+      if (e.key === 'Enter') this.confirmGuest();
+    });
+    
+    // Enable/disable action buttons based on player selection
+    playerSelect.addEventListener('change', () => {
+      const hasSelection = playerSelect.value !== '';
+      addScoreBtn.disabled = !hasSelection;
+      addRebuyBtn.disabled = !hasSelection;
+    });
+    
+    // Initial state - buttons disabled
+    addScoreBtn.disabled = true;
+    addRebuyBtn.disabled = true;
+  }
+  
+  addRebuy() {
+    const select = DOM.$('playerSelect');
+    if (!select || !select.value) {
+      UI.showMessage(Resources.get('errors.noPlayerSelected'), 'error');
+      return;
     }
+    
+    if (select.value === 'guest') {
+      this.openGuestModal('rebuy');
+      return;
+    }
+    
+    const player = this.players.find(p => p.id === parseInt(select.value));
+    if (!player) return;
+    
+    const entryId = this.nextEntryId++;
+    this.rebuys.push({
+      id: entryId,
+      player: player,
+      type: 'regular',
+      paid: false
+    });
+    
+    select.value = '';
+    // Trigger change event to disable buttons
+    select.dispatchEvent(new Event('change'));
+    
+    this.autoSave();
+    this.renderRebuys();
+    this.updateSummary();
+    
+    // Auto-expand newly added entry for editing
+    setTimeout(() => this.toggleEditMode(entryId, 'rebuy'), 100);
+    
+    UI.showMessage(Resources.get('messages.rebuyAdded', { name: player.nickName }), 'success');
+  }
+  
+  addScore() {
+    const select = DOM.$('playerSelect');
+    if (!select || !select.value) {
+      UI.showMessage(Resources.get('errors.noPlayerSelected'), 'error');
+      return;
+    }
+    
+    if (select.value === 'guest') {
+      this.openGuestModal('score');
+      return;
+    }
+    
+    const player = this.players.find(p => p.id === parseInt(select.value));
+    if (!player) return;
+    
+    // Insert at the BEGINNING of the array (position 1)
+    this.scores.unshift({
+      id: this.nextEntryId++,
+      player: player,
+      paid: false
+    });
+    
+    select.value = '';
+    // Trigger change event to disable buttons
+    select.dispatchEvent(new Event('change'));
+    
+    this.autoSave();
+    this.renderScores();
+    this.updateSummary();
+    UI.showMessage(Resources.get('messages.scoreAdded', { name: player.nickName }), 'success');
+  }
+  
+  openGuestModal(context) {
+    const modal = DOM.$('guestModal');
+    modal.dataset.context = context;
+    modal.classList.add('active');
+    DOM.$('guestNameInput').value = '';
+    setTimeout(() => DOM.$('guestNameInput').focus(), 100);
   }
   
   closeGuestModal() {
-    const modal = DOM.$('guestModal');
-    if (modal) modal.classList.remove('active');
+    DOM.$('guestModal').classList.remove('active');
   }
   
   confirmGuest() {
     const input = DOM.$('guestNameInput');
-    if (!input) return;
-    
     const guestName = input.value.trim();
     
     if (!guestName) {
@@ -165,289 +205,368 @@ class GameRecorderApp {
       return;
     }
     
-    // Create guest player
+    const context = DOM.$('guestModal').dataset.context;
     const guestId = `guest_${this.nextGuestId++}`;
     const guestPlayer = Player.createGuest(guestName, guestId);
     
-    // Add to game data
-    this.gameData[guestId] = {
-      player: guestPlayer,
-      playing: true, // Auto-select guest
-      rebuyType: 'none',
-      payment: 200,
-      position: ''
-    };
+    if (context === 'rebuy') {
+      const entryId = this.nextEntryId++;
+      this.rebuys.push({
+        id: entryId,
+        player: guestPlayer,
+        type: 'regular',
+        paid: false
+      });
+      this.renderRebuys();
+      setTimeout(() => this.toggleEditMode(entryId, 'rebuy'), 100);
+    } else {
+      // Insert guest score at the BEGINNING
+      this.scores.unshift({
+        id: this.nextEntryId++,
+        player: guestPlayer,
+        paid: false
+      });
+      this.renderScores();
+    }
     
     this.closeGuestModal();
     this.autoSave();
-    this.renderPlayers();
     this.updateSummary();
-    
     UI.showMessage(Resources.get('messages.guestAdded', { name: guestName }), 'success');
   }
   
-  togglePlayer(playerId) {
-    if (this.gameData[playerId]) {
-      this.gameData[playerId].playing = !this.gameData[playerId].playing;
-      
-      // Reset values when unchecked
-      if (!this.gameData[playerId].playing) {
-        this.gameData[playerId].rebuyType = 'none';
-        this.gameData[playerId].payment = 200;
-        this.gameData[playerId].position = '';
-      }
-      
-      this.autoSave();
-      this.renderPlayers();
-      this.updateSummary();
+  toggleEditMode(entryId, type) {
+    if (this.editingEntryId === entryId) {
+      this.editingEntryId = null;
+    } else {
+      this.editingEntryId = entryId;
     }
-  }
-  
-  updateRebuyType(playerId, type) {
-    if (this.gameData[playerId]) {
-      this.gameData[playerId].rebuyType = type;
-      
-      // Update payment based on rebuy type
-      if (type === 'house') {
-        this.gameData[playerId].payment = 200; // Only buy-in, no rebuy cost
-      } else if (type === 'none') {
-        this.gameData[playerId].payment = 200;
-      } else {
-        this.gameData[playerId].payment = 400; // Buy-in + rebuy
-      }
-      
-      this.autoSave();
-      this.updateSummary();
-    }
-  }
-  
-  updatePayment(playerId, value) {
-    if (this.gameData[playerId]) {
-      this.gameData[playerId].payment = parseInt(value) || 0;
-      this.autoSave();
-      this.updateSummary();
-    }
-  }
-  
-  updatePosition(playerId, value) {
-    if (this.gameData[playerId]) {
-      this.gameData[playerId].position = value ? parseInt(value) : '';
-      this.autoSave();
-    }
-  }
-  
-  removeGuest(guestId) {
-    if (UI.confirm(Resources.get('confirmations.removeGuest'))) {
-      delete this.gameData[guestId];
-      this.autoSave();
-      this.renderPlayers();
-      this.updateSummary();
-    }
-  }
-  
-  selectAll() {
-    Object.keys(this.gameData).forEach(id => {
-      this.gameData[id].playing = true;
-    });
-    this.autoSave();
-    this.renderPlayers();
-    this.updateSummary();
-  }
-  
-  clearAll() {
-    if (UI.confirm(Resources.get('confirmations.clearAll'))) {
-      Object.keys(this.gameData).forEach(id => {
-        if (this.gameData[id].player.isGuest) {
-          delete this.gameData[id];
-        } else {
-          this.gameData[id].playing = false;
-          this.gameData[id].rebuyType = 'none';
-          this.gameData[id].payment = 200;
-          this.gameData[id].position = '';
-        }
-      });
-      localStorage.removeItem(CONFIG.storage.gameData);
-      this.renderPlayers();
-      this.updateSummary();
-    }
-  }
-  
-  renderPlayers() {
-    const list = DOM.$('playersList');
-    if (!list) return;
     
+    if (type === 'rebuy') {
+      this.renderRebuys();
+    } else {
+      this.renderScores();
+    }
+  }
+  
+  removeRebuy(entryId) {
+    if (UI.confirm(Resources.get('confirmations.removeEntry'))) {
+      this.rebuys = this.rebuys.filter(r => r.id !== entryId);
+      this.editingEntryId = null;
+      this.autoSave();
+      this.renderRebuys();
+      this.updateSummary();
+    }
+  }
+  
+  removeScore(entryId) {
+    if (UI.confirm(Resources.get('confirmations.removeEntry'))) {
+      this.scores = this.scores.filter(s => s.id !== entryId);
+      this.autoSave();
+      this.renderScores();
+      this.updateSummary();
+    }
+  }
+  
+  updateRebuyType(entryId, type) {
+    const rebuy = this.rebuys.find(r => r.id === entryId);
+    if (rebuy) {
+      rebuy.type = type;
+      this.autoSave();
+      this.renderRebuys();
+    }
+  }
+  
+  updateRebuyPaid(entryId, paid) {
+    const rebuy = this.rebuys.find(r => r.id === entryId);
+    if (rebuy) {
+      rebuy.paid = paid;
+      this.autoSave();
+      this.updateSummary();
+    }
+  }
+  
+  updateSummary() {
+    const totalEntries = this.rebuys.length + this.scores.length;
+    const uniquePlayers = new Set([
+      ...this.rebuys.map(r => r.player.id),
+      ...this.scores.map(s => s.player.id)
+    ]).size;
+    const paidEntries = this.rebuys.filter(r => r.paid).length + this.scores.filter(s => s.paid).length;
+    const totalMoney = paidEntries * this.buyInAmount;
+    
+    DOM.$('totalEntries').textContent = totalEntries;
+    DOM.$('totalPlayers').textContent = uniquePlayers;
+    DOM.$('totalMoney').textContent = UI.formatCurrency(totalMoney);
+  }
+  
+  updateScorePosition(entryId, position) {
+    const score = this.scores.find(s => s.id === entryId);
+    if (score) {
+      score.position = position ? parseInt(position) : '';
+      this.autoSave();
+    }
+  }
+  
+  updateScorePaid(entryId, paid) {
+    const score = this.scores.find(s => s.id === entryId);
+    if (score) {
+      score.paid = paid;
+      this.autoSave();
+      this.updateSummary();
+    }
+  }
+  
+  renderRebuys() {
+    const list = DOM.$('rebuyList');
+    const section = DOM.$('rebuySection');
+    
+    if (this.rebuys.length === 0) {
+      section.classList.add('hidden');
+      return;
+    }
+    
+    section.classList.remove('hidden');
     DOM.clear(list);
     
-    // Render club members
-    this.players.forEach(player => {
-      const data = this.gameData[player.id];
-      if (data) {
-        const card = this.createPlayerCard(data);
-        list.appendChild(card);
-      }
-    });
-    
-    // Render guests
-    Object.values(this.gameData).forEach(data => {
-      if (data.player.isGuest) {
-        const card = this.createPlayerCard(data, true);
-        list.appendChild(card);
-      }
+    this.rebuys.forEach(rebuy => {
+      const card = this.createRebuyCard(rebuy);
+      list.appendChild(card);
     });
   }
   
-  createPlayerCard(data, isGuest = false) {
-    const player = data.player;
+  createRebuyCard(rebuy) {
     const card = document.createElement('div');
-    card.className = 'player-card' + (data.playing ? ' selected' : '');
+    const isEditing = this.editingEntryId === rebuy.id;
+    card.className = 'entry-card rebuy-card' + (isEditing ? ' editing' : '');
     
-    const removeBtn = isGuest ? `<button class="remove-guest-btn" data-player-id="${player.id}">${Resources.icon('trash')}</button>` : '';
-    
-    const rebuyOptions = data.playing ? this.createRebuyOptions(player.id, data.rebuyType) : '';
-    const paymentInput = data.playing ? `
-      <div class="input-box">
-        <label>${Resources.get('labels.payment')}</label>
-        <input type="number" 
-               inputmode="numeric"
-               value="${data.payment}" 
-               step="50"
-               min="0"
-               data-player-id="${player.id}"
-               data-field="payment"
-               onclick="event.stopPropagation(); this.select()">
-      </div>
-    ` : '';
-    
-    const positionInput = data.playing ? `
-      <div class="input-box">
-        <label>${Resources.get('labels.position')}</label>
-        <input type="number" 
-               inputmode="numeric"
-               value="${data.position}" 
-               placeholder="${Resources.get('placeholders.positionPlaceholder')}"
-               min="1"
-               max="30"
-               data-player-id="${player.id}"
-               data-field="position"
-               onclick="event.stopPropagation(); this.select()">
-      </div>
-    ` : '';
+    const typeIcon = Resources.icon(rebuy.type);
+    const typeLabel = Resources.get(`rebuyTypes.${rebuy.type}`);
     
     card.innerHTML = `
-      <div class="player-checkbox">
-        <input type="checkbox" 
-               id="check_${player.id}" 
-               ${data.playing ? 'checked' : ''}
-               data-player-id="${player.id}">
-        <label for="check_${player.id}">${player.displayName}</label>
-        ${removeBtn}
+      <div class="entry-header-compact">
+        <div class="entry-name-section" data-id="${rebuy.id}" data-type="rebuy">
+          <input type="checkbox" 
+                 class="paid-checkbox-inline" 
+                 id="paid_rebuy_${rebuy.id}" 
+                 ${rebuy.paid ? 'checked' : ''}
+                 data-id="${rebuy.id}"
+                 data-type="rebuy">
+          <label for="paid_rebuy_${rebuy.id}" class="paid-label-inline">
+            ${rebuy.paid ? Resources.icon('check') : Resources.icon('cross')}
+          </label>
+          <span class="entry-player-name-compact">${rebuy.player.displayName}</span>
+          <span class="rebuy-type-badge">${typeIcon} ${typeLabel}</span>
+        </div>
+        <button class="remove-entry-btn-compact" data-id="${rebuy.id}">${Resources.icon('trash')}</button>
       </div>
-      ${data.playing ? `
-        <div class="player-details">
-          <div class="rebuy-section">
-            <label class="rebuy-label">${Resources.get('labels.rebuyType')}</label>
-            <div class="rebuy-types">
-              ${rebuyOptions}
-            </div>
-          </div>
-          <div class="player-inputs">
-            ${paymentInput}
-            ${positionInput}
+      ${isEditing ? `
+        <div class="entry-edit-section">
+          <div class="rebuy-type-selector-compact">
+            ${this.createRebuyTypeRadios(rebuy.id, rebuy.type)}
           </div>
         </div>
       ` : ''}
     `;
     
-    // Attach event listeners
-    const checkbox = card.querySelector('input[type="checkbox"]');
-    if (checkbox) {
-      checkbox.addEventListener('change', (e) => {
+    // Event listeners
+    card.querySelector('.remove-entry-btn-compact').addEventListener('click', (e) => {
+      e.stopPropagation();
+      this.removeRebuy(rebuy.id);
+    });
+    
+    // Checkbox with stopPropagation to prevent card toggle
+    card.querySelector('.paid-checkbox-inline').addEventListener('click', (e) => {
+      e.stopPropagation();
+    });
+    
+    card.querySelector('.paid-checkbox-inline').addEventListener('change', (e) => {
+      e.stopPropagation();
+      this.updateRebuyPaid(rebuy.id, e.target.checked);
+    });
+    
+    // Only the player name area triggers edit mode
+    const nameSpan = card.querySelector('.entry-player-name-compact');
+    const badge = card.querySelector('.rebuy-type-badge');
+    
+    [nameSpan, badge].forEach(el => {
+      el.addEventListener('click', (e) => {
         e.stopPropagation();
-        this.togglePlayer(player.id);
+        this.toggleEditMode(rebuy.id, 'rebuy');
+      });
+    });
+    
+    if (isEditing) {
+      card.querySelectorAll('input[name="rebuy_type_' + rebuy.id + '"]').forEach(radio => {
+        radio.addEventListener('change', (e) => {
+          this.updateRebuyType(rebuy.id, e.target.value);
+          this.toggleEditMode(rebuy.id, 'rebuy'); // Close after selection
+        });
       });
     }
-    
-    const removeButton = card.querySelector('.remove-guest-btn');
-    if (removeButton) {
-      removeButton.addEventListener('click', (e) => {
-        e.stopPropagation();
-        this.removeGuest(player.id);
-      });
-    }
-    
-    const rebuyRadios = card.querySelectorAll('input[name="rebuy_' + player.id + '"]');
-    rebuyRadios.forEach(radio => {
-      radio.addEventListener('change', (e) => {
-        this.updateRebuyType(player.id, e.target.value);
-      });
-    });
-    
-    const inputs = card.querySelectorAll('input[data-field]');
-    inputs.forEach(input => {
-      input.addEventListener('change', (e) => {
-        const playerId = e.target.dataset.playerId;
-        const field = e.target.dataset.field;
-        
-        if (field === 'payment') {
-          this.updatePayment(playerId, e.target.value);
-        } else if (field === 'position') {
-          this.updatePosition(playerId, e.target.value);
-        }
-      });
-    });
-    
-    // Card click to toggle
-    card.addEventListener('click', (e) => {
-      if (e.target.tagName !== 'INPUT' && e.target.tagName !== 'BUTTON' && e.target.tagName !== 'LABEL') {
-        this.togglePlayer(player.id);
-      }
-    });
     
     return card;
   }
   
-  createRebuyOptions(playerId, selectedType) {
-    const types = ['none', 'regular', 'house', 'dotke'];
+  createRebuyTypeRadios(entryId, selectedType) {
+    const types = ['regular', 'house', 'dotke'];
     return types.map(type => `
-      <div class="rebuy-type-option">
-        <input type="radio" 
-               id="${type}_${playerId}" 
-               name="rebuy_${playerId}" 
-               value="${type}"
-               ${selectedType === type ? 'checked' : ''}>
-        <label class="rebuy-type-label" for="${type}_${playerId}">
-          ${Resources.icon(type)} ${Resources.get(`rebuyTypes.${type}`)}
-        </label>
-      </div>
+      <input type="radio" 
+             id="${type}_${entryId}" 
+             name="rebuy_type_${entryId}" 
+             value="${type}"
+             ${selectedType === type ? 'checked' : ''}>
+      <label class="rebuy-type-label-inline" for="${type}_${entryId}">
+        ${Resources.icon(type)} ${Resources.get(`rebuyTypes.${type}`)}
+      </label>
     `).join('');
   }
   
-  updateSummary() {
-    const playingPlayers = Object.values(this.gameData).filter(p => p.playing);
-    const totalPlayers = playingPlayers.length;
-    const totalMoney = playingPlayers.reduce((sum, p) => sum + p.payment, 0);
+  renderScores() {
+    const list = DOM.$('scoreList');
+    const section = DOM.$('scoreSection');
     
-    const totalPlayersEl = DOM.$('totalPlayers');
-    const totalMoneyEl = DOM.$('totalMoney');
+    if (this.scores.length === 0) {
+      section.classList.add('hidden');
+      return;
+    }
     
-    if (totalPlayersEl) totalPlayersEl.textContent = totalPlayers;
-    if (totalMoneyEl) totalMoneyEl.textContent = UI.formatCurrency(totalMoney);
+    section.classList.remove('hidden');
+    DOM.clear(list);
+    
+    this.scores.forEach((score, index) => {
+      const card = this.createScoreCard(score, index);
+      list.appendChild(card);
+    });
+  }
+  
+  createScoreCard(score, index) {
+    const card = document.createElement('div');
+    card.className = 'entry-card score-card';
+    card.draggable = true;
+    card.dataset.entryId = score.id;
+    
+    const position = index + 1;
+    
+    card.innerHTML = `
+      <div class="entry-header-compact score-header-full">
+        <div class="drag-handle">${Resources.icon('trophy')} ${position}</div>
+        <div class="entry-name-section">
+          <input type="checkbox" 
+                 class="paid-checkbox-inline" 
+                 id="paid_score_${score.id}" 
+                 ${score.paid ? 'checked' : ''}
+                 data-id="${score.id}"
+                 data-type="score">
+          <label for="paid_score_${score.id}" class="paid-label-inline">
+            ${score.paid ? Resources.icon('check') : Resources.icon('cross')}
+          </label>
+          <span class="entry-player-name-compact">${score.player.displayName}</span>
+        </div>
+        <button class="remove-entry-btn-compact" data-id="${score.id}">${Resources.icon('trash')}</button>
+      </div>
+    `;
+    
+    // Event listeners
+    card.querySelector('.remove-entry-btn-compact').addEventListener('click', () => this.removeScore(score.id));
+    
+    card.querySelector('.paid-checkbox-inline').addEventListener('click', (e) => {
+      e.stopPropagation();
+    });
+    
+    card.querySelector('.paid-checkbox-inline').addEventListener('change', (e) => {
+      e.stopPropagation();
+      this.updateScorePaid(score.id, e.target.checked);
+    });
+    
+    // Drag and drop events
+    card.addEventListener('dragstart', (e) => this.handleDragStart(e));
+    card.addEventListener('dragend', (e) => this.handleDragEnd(e));
+    card.addEventListener('dragover', (e) => this.handleDragOver(e));
+    card.addEventListener('drop', (e) => this.handleDrop(e));
+    card.addEventListener('dragenter', (e) => this.handleDragEnter(e));
+    card.addEventListener('dragleave', (e) => this.handleDragLeave(e));
+    
+    return card;
+  }
+  
+  handleDragStart(e) {
+    this.draggedElement = e.currentTarget;
+    e.currentTarget.classList.add('dragging');
+    e.dataTransfer.effectAllowed = 'move';
+    e.dataTransfer.setData('text/html', e.currentTarget.innerHTML);
+  }
+  
+  handleDragEnd(e) {
+    e.currentTarget.classList.remove('dragging');
+    document.querySelectorAll('.entry-card.drag-over').forEach(el => {
+      el.classList.remove('drag-over');
+    });
+    this.draggedElement = null;
+  }
+  
+  handleDragOver(e) {
+    if (e.preventDefault) {
+      e.preventDefault();
+    }
+    e.dataTransfer.dropEffect = 'move';
+    return false;
+  }
+  
+  handleDragEnter(e) {
+    if (e.currentTarget !== this.draggedElement) {
+      e.currentTarget.classList.add('drag-over');
+    }
+  }
+  
+  handleDragLeave(e) {
+    e.currentTarget.classList.remove('drag-over');
+  }
+  
+  handleDrop(e) {
+    if (e.stopPropagation) {
+      e.stopPropagation();
+    }
+    
+    e.preventDefault();
+    
+    const draggedId = parseInt(this.draggedElement.dataset.entryId);
+    const droppedOnId = parseInt(e.currentTarget.dataset.entryId);
+    
+    if (draggedId !== droppedOnId) {
+      // Find indices
+      const draggedIndex = this.scores.findIndex(s => s.id === draggedId);
+      const droppedOnIndex = this.scores.findIndex(s => s.id === droppedOnId);
+      
+      // Reorder array
+      const [draggedItem] = this.scores.splice(draggedIndex, 1);
+      this.scores.splice(droppedOnIndex, 0, draggedItem);
+      
+      // Re-render and save
+      this.autoSave();
+      this.renderScores();
+    }
+    
+    return false;
   }
   
   autoSave() {
     if (!CONFIG.features.autoSave) return;
     
     const data = {
-      gameData: Object.keys(this.gameData).map(key => {
-        const entry = this.gameData[key];
-        return {
-          player: entry.player.toJSON(),
-          playing: entry.playing,
-          rebuyType: entry.rebuyType,
-          payment: entry.payment,
-          position: entry.position
-        };
-      }),
+      rebuys: this.rebuys.map(r => ({
+        id: r.id,
+        player: r.player.toJSON(),
+        type: r.type,
+        paid: r.paid
+      })),
+      scores: this.scores.map(s => ({
+        id: s.id,
+        player: s.player.toJSON(),
+        paid: s.paid
+      })),
+      buyInAmount: this.buyInAmount,
+      nextEntryId: this.nextEntryId,
       nextGuestId: this.nextGuestId
     };
     
@@ -457,28 +576,34 @@ class GameRecorderApp {
   loadFromStorage() {
     const data = StorageManager.load(CONFIG.storage.gameData, CONFIG.features.validateDates);
     
-    if (data && data.gameData) {
-      data.gameData.forEach(entry => {
-        const player = new Player(entry.player);
-        this.gameData[player.id] = {
-          player: player,
-          playing: entry.playing,
-          rebuyType: entry.rebuyType,
-          payment: entry.payment,
-          position: entry.position
-        };
-      });
+    if (data) {
+      this.rebuys = (data.rebuys || []).map(r => ({
+        id: r.id,
+        player: new Player(r.player),
+        type: r.type,
+        paid: r.paid
+      }));
       
+      this.scores = (data.scores || []).map(s => ({
+        id: s.id,
+        player: new Player(s.player),
+        paid: s.paid
+      }));
+      
+      this.buyInAmount = data.buyInAmount || 200;
+      this.nextEntryId = data.nextEntryId || 1;
       this.nextGuestId = data.nextGuestId || 1001;
+      
+      DOM.$('buyInAmount').value = this.buyInAmount;
       UI.showMessage(Resources.get('messages.dataLoaded'), 'success', 2000);
     }
   }
   
   async saveGame() {
-    const playingPlayers = Object.values(this.gameData).filter(p => p.playing);
+    const totalEntries = this.rebuys.length + this.scores.length;
     
-    if (playingPlayers.length === 0) {
-      UI.showMessage(Resources.get('errors.noPlayers'), 'error');
+    if (totalEntries === 0) {
+      UI.showMessage(Resources.get('errors.noEntries'), 'error');
       return;
     }
     
@@ -489,45 +614,33 @@ class GameRecorderApp {
       const gameRecord = {
         date: new Date().toISOString().split('T')[0],
         time: new Date().toLocaleTimeString('he-IL'),
-        players: playingPlayers.map(p => ({
-          name: p.player.nickName,
-          fullName: p.player.fullName,
-          type: p.player.type,
-          rebuyType: p.rebuyType,
-          payment: p.payment,
-          position: p.position || null
+        buyInAmount: this.buyInAmount,
+        rebuys: this.rebuys.map(r => ({
+          name: r.player.nickName,
+          type: r.type,
+          paid: r.paid
+        })),
+        scores: this.scores.map((s, index) => ({
+          name: s.player.nickName,
+          position: index + 1, // Position calculated from array order
+          paid: s.paid
         })),
         summary: {
-          totalPlayers: playingPlayers.length,
-          totalMoney: playingPlayers.reduce((sum, p) => sum + p.payment, 0),
-          members: playingPlayers.filter(p => p.player.isMember).length,
-          guests: playingPlayers.filter(p => p.player.isGuest).length,
-          rebuys: {
-            none: playingPlayers.filter(p => p.rebuyType === 'none').length,
-            regular: playingPlayers.filter(p => p.rebuyType === 'regular').length,
-            house: playingPlayers.filter(p => p.rebuyType === 'house').length,
-            dotke: playingPlayers.filter(p => p.rebuyType === 'dotke').length
-          }
+          totalEntries: totalEntries,
+          totalPlayers: new Set([...this.rebuys.map(r => r.player.id), ...this.scores.map(s => s.player.id)]).size,
+          totalMoney: (this.rebuys.filter(r => r.paid).length + this.scores.filter(s => s.paid).length) * this.buyInAmount
         }
       };
       
-      // Save via data service
       await this.dataService.saveGame(gameRecord);
       
-      // Format for WhatsApp
       const whatsappText = this.formatForWhatsApp(gameRecord);
+      const shared = await UI.share({ title: Resources.get('titles.gameRecorder'), text: whatsappText });
       
-      // Try to share
-      const shared = await UI.share({
-        title: Resources.get('titles.gameRecorder'),
-        text: whatsappText
-      });
-      
-      if (!shared) {
-        UI.openWhatsApp(whatsappText);
-      }
+      if (!shared) UI.openWhatsApp(whatsappText);
       
       UI.showMessage(Resources.get('messages.gameSaved'), 'success');
+      localStorage.removeItem(CONFIG.storage.gameData);
       
     } catch (error) {
       console.error('Failed to save game:', error);
@@ -540,25 +653,28 @@ class GameRecorderApp {
   formatForWhatsApp(gameRecord) {
     let text = `${Resources.icon('game')} *${Resources.get('titles.gameRecorder')} - ${gameRecord.date}*\n`;
     text += `? ${gameRecord.time}\n`;
+    text += `?? *Buy-In:* ${UI.formatCurrency(gameRecord.buyInAmount)}\n`;
     text += `${'='.repeat(30)}\n\n`;
-    text += `?? *??"? ??????:* ${gameRecord.summary.totalPlayers}`;
-    if (gameRecord.summary.guests > 0) {
-      text += ` (${gameRecord.summary.members} ????? + ${gameRecord.summary.guests} ??????)`;
-    }
-    text += `\n`;
-    text += `?? *??"? ???:* ${UI.formatCurrency(gameRecord.summary.totalMoney)}\n`;
-    text += `?? *?????:* ????: ${gameRecord.summary.rebuys.regular}, ???: ${gameRecord.summary.rebuys.house}, ?????: ${gameRecord.summary.rebuys.dotke}\n\n`;
-    text += `*????? ??????:*\n`;
-    text += `${'-'.repeat(30)}\n`;
+    text += `?? *?????:*\n`;
+    text += `• ??"? ??????: ${gameRecord.summary.totalEntries}\n`;
+    text += `• ??"? ??????: ${gameRecord.summary.totalPlayers}\n`;
+    text += `• ??"? ????: ${UI.formatCurrency(gameRecord.summary.totalMoney)}\n\n`;
     
-    gameRecord.players
-      .sort((a, b) => (a.position || 999) - (b.position || 999))
-      .forEach((player, index) => {
-        const num = player.position ? `${Resources.icon('trophy')}${player.position}` : `${index + 1}.`;
-        const guestMarker = player.type === 'guest' ? ` ${Resources.icon('guest')}` : '';
-        const rebuyMarker = player.rebuyType !== 'none' ? ` [${Resources.get(`rebuyTypes.${player.rebuyType}`)}]` : '';
-        text += `${num} ${player.name}${guestMarker}${rebuyMarker} - ${UI.formatCurrency(player.payment)}\n`;
+    if (gameRecord.rebuys.length > 0) {
+      text += `?? *????? (${gameRecord.rebuys.length}):*\n`;
+      gameRecord.rebuys.forEach(r => {
+        const icon = Resources.icon(r.type);
+        text += `• ${r.name} ${icon} ${Resources.get(`rebuyTypes.${r.type}`)} ${r.paid ? '?' : '?'}\n`;
       });
+      text += '\n';
+    }
+    
+    if (gameRecord.scores.length > 0) {
+      text += `?? *?????? (${gameRecord.scores.length}):*\n`;
+      gameRecord.scores.forEach((s, index) => {
+        text += `${index + 1}. ${s.name} ${s.paid ? '?' : '?'}\n`;
+      });
+    }
     
     return text;
   }
@@ -567,18 +683,15 @@ class GameRecorderApp {
 // Global app instance
 let app;
 
-// Initialize app when DOM is ready
 document.addEventListener('DOMContentLoaded', () => {
   try {
     console.log('Initializing Game Recorder App...');
     app = new GameRecorderApp();
     
-    // Expose functions to window for inline onclick handlers
-    window.addGuest = () => app.addGuest();
+    window.addRebuy = () => app.addRebuy();
+    window.addScore = () => app.addScore();
     window.confirmGuest = () => app.confirmGuest();
     window.closeGuestModal = () => app.closeGuestModal();
-    window.selectAll = () => app.selectAll();
-    window.clearAll = () => app.clearAll();
     window.saveGame = () => app.saveGame();
     
     console.log('App initialized successfully');
