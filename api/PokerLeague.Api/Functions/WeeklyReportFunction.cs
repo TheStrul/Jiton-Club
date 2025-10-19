@@ -1,4 +1,3 @@
-
 using Microsoft.Azure.Functions.Worker;
 using Microsoft.Azure.Functions.Worker.Http;
 using Microsoft.Extensions.Logging;
@@ -14,14 +13,30 @@ namespace PokerLeague.Api.Functions;
 public class WeeklyReportFunction
 {
     private readonly SqlRepository _repo;
-    private readonly ILogger _logger;
-    private readonly BlobServiceClient _blobService;
-    public WeeklyReportFunction(SqlRepository repo, ILoggerFactory lf)
+    private readonly ILogger<WeeklyReportFunction> _logger;
+    private readonly BlobServiceClient? _blobService;
+    
+    public WeeklyReportFunction(SqlRepository repo, ILogger<WeeklyReportFunction> logger)
     {
         _repo = repo;
-        _logger = lf.CreateLogger<WeeklyReportFunction>();
-        var conn = Environment.GetEnvironmentVariable("AzureWebJobsStorage");
-        _blobService = new BlobServiceClient(conn);
+        _logger = logger;
+        
+        try
+        {
+            var conn = Environment.GetEnvironmentVariable("AzureWebJobsStorage");
+            if (!string.IsNullOrEmpty(conn) && conn != "UseDevelopmentStorage=true")
+            {
+                _blobService = new BlobServiceClient(conn);
+            }
+            else
+            {
+                _logger.LogWarning("Azure Storage not configured. Weekly report function will not store PDFs.");
+            }
+        }
+        catch (Exception ex)
+        {
+            _logger.LogWarning(ex, "Failed to initialize BlobServiceClient. Weekly report function will not store PDFs.");
+        }
     }
 
     // Runs every Friday 06:00 UTC (~09:00 Israel when on IDT)
@@ -46,11 +61,19 @@ public class WeeklyReportFunction
     {
         var standings = (await _repo.GetStandingsAsync(seasonId)).ToList();
         var bytes = BuildPdf(standings, seasonId);
-        var container = _blobService.GetBlobContainerClient("reports");
-        await container.CreateIfNotExistsAsync();
-        var name = $"league_{seasonId}_weekly_{DateTime.UtcNow:yyyyMMdd}.pdf";
-        await container.UploadBlobAsync(name, new BinaryData(bytes));
-        _logger.LogInformation("Uploaded weekly report {Name}", name);
+        
+        if (_blobService != null)
+        {
+            var container = _blobService.GetBlobContainerClient("reports");
+            await container.CreateIfNotExistsAsync();
+            var name = $"league_{seasonId}_weekly_{DateTime.UtcNow:yyyyMMdd}.pdf";
+            await container.UploadBlobAsync(name, new BinaryData(bytes));
+            _logger.LogInformation("Uploaded weekly report {Name}", name);
+        }
+        else
+        {
+            _logger.LogWarning("BlobServiceClient not available. PDF generated but not stored.");
+        }
     }
 
     private byte[] BuildPdf(IEnumerable<dynamic> standings, int seasonId)

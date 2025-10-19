@@ -1,0 +1,304 @@
+<!DOCTYPE html>
+<html dir="rtl" lang="he">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>API Connection Test - Jiton Poker</title>
+    <style>
+        body {
+            font-family: system-ui, -apple-system, sans-serif;
+            direction: rtl;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 20px;
+            min-height: 100vh;
+        }
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: rgba(255,255,255,0.1);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 30px;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.3);
+        }
+        h1 {
+            text-align: center;
+            font-size: 2.5em;
+            margin-bottom: 30px;
+            color: #ffd700;
+        }
+        .test-section {
+            background: rgba(255,255,255,0.05);
+            border-radius: 15px;
+            padding: 20px;
+            margin-bottom: 20px;
+            border: 2px solid rgba(255,255,255,0.1);
+        }
+        .test-section h2 {
+            color: #ffd700;
+            margin-bottom: 15px;
+            font-size: 1.5em;
+        }
+        button {
+            background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);
+            color: white;
+            border: none;
+            padding: 12px 30px;
+            border-radius: 10px;
+            font-size: 1.1em;
+            cursor: pointer;
+            margin: 5px;
+            transition: all 0.3s;
+        }
+        button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(0,0,0,0.3);
+        }
+        .result {
+            background: rgba(0,0,0,0.3);
+            border-radius: 10px;
+            padding: 15px;
+            margin-top: 15px;
+            font-family: 'Courier New', monospace;
+            font-size: 0.9em;
+            max-height: 400px;
+            overflow-y: auto;
+        }
+        .success { color: #4CAF50; }
+        .error { color: #ff6b6b; }
+        .info { color: #64b5f6; }
+        .status {
+            display: inline-block;
+            padding: 5px 15px;
+            border-radius: 20px;
+            font-weight: bold;
+            margin-right: 10px;
+        }
+        .status.online {
+            background: #4CAF50;
+            color: white;
+        }
+        .status.offline {
+            background: #ff6b6b;
+            color: white;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>?? Jiton Poker - API Connection Test</h1>
+        
+        <div class="test-section">
+            <h2>?? Backend Status</h2>
+            <p>API URL: <strong id="apiUrl">http://localhost:7071</strong></p>
+            <p>Status: <span class="status offline" id="status">Checking...</span></p>
+            <button onclick="testConnection()">?? Test Connection</button>
+            <div class="result" id="connectionResult"></div>
+        </div>
+
+        <div class="test-section">
+            <h2>?? Get Players</h2>
+            <button onclick="testGetPlayers()">?? Fetch Active Players</button>
+            <div class="result" id="playersResult"></div>
+        </div>
+
+        <div class="test-section">
+            <h2>?? Get Standings</h2>
+            <button onclick="testGetStandings()">?? Fetch League Standings</button>
+            <div class="result" id="standingsResult"></div>
+        </div>
+
+        <div class="test-section">
+            <h2>?? Create Test Event</h2>
+            <button onclick="testCreateEvent()">? Create Event</button>
+            <div class="result" id="eventResult"></div>
+        </div>
+
+        <div class="test-section">
+            <h2>?? Configuration</h2>
+            <p>Environment: <strong id="environment">development</strong></p>
+            <p>Use API: <strong id="useApi">false</strong></p>
+            <button onclick="showConfig()">?? Show Full Config</button>
+            <div class="result" id="configResult"></div>
+        </div>
+    </div>
+
+    <script src="js/config.js"></script>
+    <script>
+        // Display config
+        document.getElementById('apiUrl').textContent = CONFIG.API_BASE;
+        document.getElementById('environment').textContent = CONFIG.environment;
+        document.getElementById('useApi').textContent = CONFIG.features.useApi ? 'Yes ?' : 'No ?';
+
+        function log(elementId, message, type = 'info') {
+            const element = document.getElementById(elementId);
+            const className = type === 'success' ? 'success' : type === 'error' ? 'error' : 'info';
+            const icon = type === 'success' ? '?' : type === 'error' ? '?' : '??';
+            element.innerHTML += `<div class="${className}">${icon} ${message}</div>`;
+            element.scrollTop = element.scrollHeight;
+        }
+
+        async function testConnection() {
+            const resultDiv = document.getElementById('connectionResult');
+            const statusSpan = document.getElementById('status');
+            resultDiv.innerHTML = '';
+            
+            log('connectionResult', 'Testing connection to ' + CONFIG.API_BASE, 'info');
+            
+            try {
+                // Increased timeout to 15 seconds for slow database warmup
+                const controller = new AbortController();
+                const timeoutId = setTimeout(() => controller.abort(), 15000);
+                
+                const startTime = Date.now();
+                const response = await fetch(`${CONFIG.API_BASE}/api/players/active`, {
+                    method: 'GET',
+                    headers: { 'Content-Type': 'application/json' },
+                    signal: controller.signal
+                });
+                
+                clearTimeout(timeoutId);
+                const responseTime = Date.now() - startTime;
+                
+                if (response.ok) {
+                    statusSpan.textContent = 'Online';
+                    statusSpan.className = 'status online';
+                    log('connectionResult', `Connected! Status: ${response.status} ${response.statusText}`, 'success');
+                    log('connectionResult', `Response time: ${responseTime}ms`, 'info');
+                    
+                    if (responseTime > 1000) {
+                        log('connectionResult', `??  Slow response (${responseTime}ms) - database might be cold starting`, 'info');
+                        log('connectionResult', 'Next requests should be faster', 'info');
+                    }
+                } else {
+                    throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+                }
+            } catch (error) {
+                statusSpan.textContent = 'Offline';
+                statusSpan.className = 'status offline';
+                
+                if (error.name === 'AbortError') {
+                    log('connectionResult', `Connection timeout after 15 seconds`, 'error');
+                } else {
+                    log('connectionResult', `Connection failed: ${error.message}`, 'error');
+                }
+                log('connectionResult', 'Make sure Azure Functions are running on http://localhost:7071', 'error');
+            }
+        }
+
+        async function testGetPlayers() {
+            const resultDiv = document.getElementById('playersResult');
+            resultDiv.innerHTML = '';
+            
+            log('playersResult', 'Fetching active players...', 'info');
+            
+            try {
+                const response = await fetch(`${CONFIG.API_BASE}/api/players/active`);
+                
+                if (!response.ok) {
+                    throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+                }
+                
+                const players = await response.json();
+                log('playersResult', `? Success! Found ${players.length} active players:`, 'success');
+                
+                players.slice(0, 10).forEach((player, index) => {
+                    log('playersResult', 
+                        `${index + 1}. ${player.FullName || player.fullName} (ID: ${player.PlayerId || player.playerId})`, 
+                        'info'
+                    );
+                });
+                
+                if (players.length > 10) {
+                    log('playersResult', `... and ${players.length - 10} more players`, 'info');
+                }
+            } catch (error) {
+                log('playersResult', `Error: ${error.message}`, 'error');
+            }
+        }
+
+        async function testGetStandings() {
+            const resultDiv = document.getElementById('standingsResult');
+            resultDiv.innerHTML = '';
+            
+            const seasonId = CONFIG.defaults.seasonId || 2;
+            log('standingsResult', `Fetching standings for season ${seasonId}...`, 'info');
+            
+            try {
+                const response = await fetch(`${CONFIG.API_BASE}/api/league/${seasonId}/standings`);
+                
+                if (!response.ok) {
+                    throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+                }
+                
+                const standings = await response.json();
+                
+                if (standings.length === 0) {
+                    log('standingsResult', '? API working! No standings yet (no games recorded)', 'success');
+                } else {
+                    log('standingsResult', `? Success! Found ${standings.length} players in standings:`, 'success');
+                    
+                    standings.slice(0, 10).forEach((player, index) => {
+                        const name = player.FullName || player.fullName;
+                        const points = player.TotalPoints || player.totalPoints || 0;
+                        log('standingsResult', `${index + 1}. ${name}: ${points} points`, 'info');
+                    });
+                }
+            } catch (error) {
+                log('standingsResult', `Error: ${error.message}`, 'error');
+            }
+        }
+
+        async function testCreateEvent() {
+            const resultDiv = document.getElementById('eventResult');
+            resultDiv.innerHTML = '';
+            
+            log('eventResult', 'Creating test event...', 'info');
+            
+            const eventData = {
+                seasonId: CONFIG.defaults.seasonId || 2,
+                eventDate: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString().split('T')[0], // 7 days from now
+                tournamentTypeId: 3, // Hold'em
+                buyInAmount: 200,
+                rebuyLimit: 3,
+                notes: 'Test event from connection test page'
+            };
+            
+            log('eventResult', `Event data: ${JSON.stringify(eventData, null, 2)}`, 'info');
+            
+            try {
+                const response = await fetch(`${CONFIG.API_BASE}/api/events/create`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(eventData)
+                });
+                
+                if (!response.ok) {
+                    const errorText = await response.text();
+                    throw new Error(`HTTP ${response.status}: ${errorText}`);
+                }
+                
+                const result = await response.json();
+                log('eventResult', `? Event created successfully!`, 'success');
+                log('eventResult', `Event ID: ${result.EventId || result.eventId}`, 'success');
+                log('eventResult', `Event Date: ${result.EventDate || result.eventDate}`, 'success');
+            } catch (error) {
+                log('eventResult', `Error: ${error.message}`, 'error');
+            }
+        }
+
+        function showConfig() {
+            const resultDiv = document.getElementById('configResult');
+            resultDiv.innerHTML = '';
+            
+            log('configResult', JSON.stringify(CONFIG, null, 2), 'info');
+        }
+
+        // Auto-test connection on load
+        window.addEventListener('load', () => {
+            setTimeout(testConnection, 500);
+        });
+    </script>
+</body>
+</html>

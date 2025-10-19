@@ -1,4 +1,3 @@
-
 using Microsoft.Azure.Functions.Worker;
 using Microsoft.Azure.Functions.Worker.Http;
 using System.Net;
@@ -17,15 +16,29 @@ public class EventsFunctions
     public async Task<HttpResponseData> CreateEvent(
         [HttpTrigger(AuthorizationLevel.Anonymous, "post", Route = "events/create")] HttpRequestData req)
     {
-        var body = await JsonSerializer.DeserializeAsync<CreateEventRequest>(req.Body, new JsonSerializerOptions{PropertyNameCaseInsensitive=true});
-        if (body == null) return req.CreateResponse(HttpStatusCode.BadRequest);
+        try
+        {
+            var body = await JsonSerializer.DeserializeAsync<CreateEventRequest>(req.Body, new JsonSerializerOptions{PropertyNameCaseInsensitive=true});
+            if (body == null) 
+            {
+                var badReq = req.CreateResponse(HttpStatusCode.BadRequest);
+                await badReq.WriteStringAsync("Request body is null");
+                return badReq;
+            }
 
-        var eventDate = body.EventDate ?? GetNextThursday(DateOnly.FromDateTime(DateTime.UtcNow.AddHours(2))); // Israel TZ approx
-        var id = await _repo.CreateEventAsync(body.SeasonId, eventDate, body.HostPlayerId, body.TournamentTypeId, body.BuyInAmount, body.RebuyLimit, body.LeagueKeeperPlayerId, body.Notes);
+            var eventDate = body.EventDate ?? GetNextThursday(DateOnly.FromDateTime(DateTime.UtcNow.AddHours(2))); // Israel TZ approx
+            var id = await _repo.CreateEventAsync(body.SeasonId, eventDate, body.HostPlayerId, body.TournamentTypeId, body.BuyInAmount, body.RebuyLimit, body.LeagueKeeperPlayerId, body.Notes);
 
-        var resp = req.CreateResponse(HttpStatusCode.OK);
-        await resp.WriteAsJsonAsync(new { EventId = id, EventDate = eventDate });
-        return resp;
+            var resp = req.CreateResponse(HttpStatusCode.OK);
+            await resp.WriteAsJsonAsync(new { EventId = id, EventDate = eventDate });
+            return resp;
+        }
+        catch (Exception ex)
+        {
+            var errorResp = req.CreateResponse(HttpStatusCode.InternalServerError);
+            await errorResp.WriteStringAsync($"Error: {ex.Message}\nStack: {ex.StackTrace}");
+            return errorResp;
+        }
     }
 
     [Function("GetEvent")]

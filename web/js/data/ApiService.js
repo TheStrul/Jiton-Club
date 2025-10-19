@@ -122,12 +122,12 @@ const DataServiceFactory = {
    * @returns {DataService} Data service instance
    */
   create() {
-    if (CONFIG.features.useApi && CONFIG.environment === 'production') {
-      console.log('Using API Service');
+    if (CONFIG.features.useApi) {
+      console.log('? Using API Service - Connected to backend');
       return new ApiService(CONFIG.API_BASE);
     }
     
-    console.log('Using Mock Service (Local Development)');
+    console.log('??  Using Mock Service - Local development mode (no backend)');
     return new MockService();
   }
 };

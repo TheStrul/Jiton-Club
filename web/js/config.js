@@ -14,7 +14,7 @@ const CONFIG = {
   
   // Feature flags
   features: {
-    useApi: false, // Set to true when API is ready
+    useApi: true, // ? ENABLED - Backend API is now running!
     autoSave: true,
     validateDates: true
   },
@@ -31,7 +31,8 @@ const CONFIG = {
   defaults: {
     rebuyType: 'regular',
     payment: 200,
-    language: 'he'
+    language: 'he',
+    seasonId: 2 // Current active season
   },
   
   // Server settings (for development)

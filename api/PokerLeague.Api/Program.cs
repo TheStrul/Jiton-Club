@@ -1,9 +1,12 @@
-
 using Microsoft.Azure.Functions.Worker;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Configuration;
 using PokerLeague.Api.Data;
+using Dapper;
+
+// Register Dapper type handler for DateOnly
+SqlMapper.AddTypeHandler(new DateOnlyTypeHandler());
 
 var host = new HostBuilder()
     .ConfigureFunctionsWorkerDefaults()

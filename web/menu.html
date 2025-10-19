@@ -6,14 +6,75 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="mobile-web-app-capable" content="yes">
-  <title>????? ???? - ?'????</title>
+  <title>תפריט ראשי - ג'יטון</title>
   
   <!-- CSS files in order -->
   <link rel="stylesheet" href="css/main.css">
   <link rel="stylesheet" href="css/layout.css">
   <link rel="stylesheet" href="css/components.css">
+  
+  <style>
+    /* Loading spinner styles */
+    #pageLoader {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      z-index: 9999;
+      transition: opacity 0.3s ease-out;
+    }
+    
+    #pageLoader.hidden {
+      opacity: 0;
+      pointer-events: none;
+    }
+    
+    .loader-icon {
+      font-size: 4em;
+      margin-bottom: 20px;
+      animation: bounce 1s infinite;
+    }
+    
+    .loader-text {
+      font-size: 1.5em;
+      color: white;
+      font-weight: bold;
+    }
+    
+    .loader-spinner {
+      width: 50px;
+      height: 50px;
+      border: 4px solid rgba(255,255,255,0.3);
+      border-top-color: #ffd700;
+      border-radius: 50%;
+      animation: spin 1s linear infinite;
+      margin-top: 20px;
+    }
+    
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+    
+    @keyframes bounce {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-20px); }
+    }
+  </style>
 </head>
 <body>
+  <!-- Loading Spinner -->
+  <div id="pageLoader">
+    <div class="loader-icon">🎯</div>
+    <div class="loader-text">טוען תפריט...</div>
+    <div class="loader-spinner"></div>
+  </div>
+
   <!-- Message Toast -->
   <div id="message" class="message"></div>
 
@@ -23,7 +84,7 @@
       <h1 id="dashboardTitle"><!-- From JS --></h1>
       <div class="user-info">
         <div class="language-switcher">
-          <button class="btn-lang" onclick="switchLanguage('he')" id="btnLangHe">??</button>
+          <button class="btn-lang" onclick="switchLanguage('he')" id="btnLangHe">עב</button>
           <button class="btn-lang" onclick="switchLanguage('en')" id="btnLangEn">EN</button>
         </div>
         <span id="welcomeMessage"><!-- From JS --></span>
@@ -55,5 +116,43 @@
     Auth.requireAuth();
   </script>
   <script src="js/menu-app.js" charset="utf-8"></script>
+  <script>
+    // Hide loader when page content is ready
+    window.addEventListener('load', function() {
+      // Give a tiny delay to ensure JS has populated everything
+      setTimeout(function() {
+        const loader = document.getElementById('pageLoader');
+        loader.classList.add('hidden');
+        // Remove from DOM after fade animation
+        setTimeout(function() {
+          loader.style.display = 'none';
+        }, 300);
+      }, 100);
+    });
+    
+    // Also hide if menu is populated (in case load event already fired)
+    const checkMenuReady = setInterval(function() {
+      const menuGrid = document.getElementById('menuGrid');
+      if (menuGrid && menuGrid.children.length > 0) {
+        const loader = document.getElementById('pageLoader');
+        loader.classList.add('hidden');
+        setTimeout(function() {
+          loader.style.display = 'none';
+        }, 300);
+        clearInterval(checkMenuReady);
+      }
+    }, 100);
+    
+    // Failsafe: hide after 5 seconds no matter what
+    setTimeout(function() {
+      const loader = document.getElementById('pageLoader');
+      if (loader.style.display !== 'none') {
+        loader.classList.add('hidden');
+        setTimeout(function() {
+          loader.style.display = 'none';
+        }, 300);
+      }
+    }, 5000);
+  </script>
 </body>
 </html>

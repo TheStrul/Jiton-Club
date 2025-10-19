@@ -12,11 +12,16 @@ public class SqlRepository
             ? throw new InvalidOperationException("Missing SqlConnection")
             : connStr;
 
-    private SqlConnection Open() => new SqlConnection(_connStr);
+    private async Task<SqlConnection> OpenAsync()
+    {
+        var con = new SqlConnection(_connStr);
+        await con.OpenAsync();
+        return con;
+    }
 
     public async Task<int> CreateEventAsync(int seasonId, DateOnly eventDate, int? hostPlayerId, int? tournamentTypeId, decimal? buyIn, int rebuyLimit, int? leagueKeeperId, string? notes)
     {
-        using var con = Open();
+        using var con = await OpenAsync();
         var id = await con.ExecuteScalarAsync<int>(@"
 IF NOT EXISTS (SELECT 1 FROM Events WHERE SeasonId=@seasonId AND EventDate=@eventDate)
 BEGIN
@@ -36,7 +41,7 @@ AND NOT EXISTS(SELECT 1 FROM EventInvites i WHERE i.EventId=@id AND i.PlayerId=p
 
     public async Task<dynamic?> GetEventAsync(int eventId)
     {
-        using var con = Open();
+        using var con = await OpenAsync();
         var evt = await con.QueryFirstOrDefaultAsync(@"
 SELECT e.*, t.Name as TournamentTypeName, p.FullName as HostName, k.FullName as KeeperName
 FROM Events e
@@ -72,7 +77,7 @@ ORDER BY pl.FullName", new { eventId });
 
     public async Task<int> RsvpAsync(int eventId, int playerId, string response)
     {
-        using var con = Open();
+        using var con = await OpenAsync();
         var inviteId = await con.ExecuteScalarAsync<int?>(@"SELECT InviteId FROM EventInvites WHERE EventId=@eventId AND PlayerId=@playerId",
             new { eventId, playerId });
         if (inviteId == null) return 0;
@@ -83,7 +88,7 @@ ORDER BY pl.FullName", new { eventId });
 
     public async Task<int> UpsertAttendanceAsync(int eventId, IEnumerable<AttendanceDto> items)
     {
-        using var con = Open();
+        using var con = await OpenAsync();
         using var tr = con.BeginTransaction();
         int total = 0;
         foreach (var it in items)
@@ -102,7 +107,7 @@ ELSE
 
     public async Task<int> SaveResultsAsync(int eventId, IEnumerable<ResultDto> results)
     {
-        using var con = Open();
+        using var con = await OpenAsync();
         using var tr = con.BeginTransaction();
         foreach (var r in results)
         {
@@ -141,7 +146,7 @@ VALUES(@eventId, @in, 0, (SELECT LeagueKeeperPlayerId FROM Events WHERE EventId=
 
     public async Task<IEnumerable<dynamic>> GetStandingsAsync(int seasonId)
     {
-        using var con = Open();
+        using var con = await OpenAsync();
         // Simple points: presence=5, descending points by finish (1..10)
         return await con.QueryAsync(@"
 WITH Points AS (
@@ -164,12 +169,12 @@ ORDER BY p.TotalPoints DESC, pl.FullName ASC;", new { seasonId });
 
     public async Task<IEnumerable<dynamic>> GetActivePlayersAsync()
     {
-        using var con = Open();
+        using var con = await OpenAsync();
         return await con.QueryAsync(@"
-SELECT PlayerId, FullName, NickName, PhoneNumber 
+SELECT PlayerId, FullName, Phone
 FROM Players 
 WHERE IsActive = 1 
-ORDER BY FullName", new { });
+ORDER BY FullName");
     }
 }
 
