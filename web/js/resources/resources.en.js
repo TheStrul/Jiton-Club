@@ -1,6 +1,7 @@
 /**
- * English Language Resources  
+ * English Language Resources
  * File: resources.en.js
+ * Encoding: UTF-8
  */
 
 Resources.register('en', {
@@ -12,18 +13,18 @@ Resources.register('en', {
     playerSelection: 'Player Selection',
     summary: 'Summary',
     gameSummary: 'Game Summary',
-    addRebuy: 'Add Rebuy Entry',
-    addScore: 'Add Result Entry',
-    playersList: 'Players in Game',
+    addRebuy: 'Add Rebuy List',
+    addScore: 'Add Results List',
+    playersList: 'Players List',
     login: 'System Login',
     mainMenu: 'Main Menu - Jiton Club'
   },
   
   sections: {
-    addPlayer: 'Add Player to Rebuy List',
+    addPlayer: 'Add Player to Tonight\'s List',
     rebuyListTitle: 'Rebuy List',
     scoreListTitle: 'Results List',
-    playersTonight: 'Players Tonight'
+    playersTonight: 'Tonight\'s Players'
   },
   
   buttons: {
@@ -36,7 +37,7 @@ Resources.register('en', {
     continueToResults: 'Continue to Results',
     selectAll: 'Select All',
     clearAll: 'Clear All',
-    finished: 'Done - Save',
+    finished: 'Finish - Save',
     addGuest: 'Add Guest',
     addRebuy: '?? Add Rebuy Entry',
     addScore: '?? Add Result Entry',
@@ -50,17 +51,19 @@ Resources.register('en', {
     playerName: 'Player Name',
     guestName: 'Guest Name',
     rebuyType: 'Rebuy Type',
-    payment: 'How much paid?',
+    payment: 'Payment Amount',
     position: 'Position',
     totalPlayers: 'Players',
     totalEntries: 'Entries',
-    totalMoney: 'Total Money',
-    totalRebuys: 'Players with Rebuys',
+    totalMoney: 'Total Amount',
+    totalRebuys: 'Total Rebuys',
     rebuyBreakdown: 'Regular/House/Dotke',
     noRebuy: 'No Rebuy',
-    buyIn: 'Buy-In Amount',
+    buyIn: 'Buy-In (Initial Entry)',
     paid: 'Paid',
-    pin: 'Access Code (4 digits)'
+    pin: 'PIN Code (4 digits)',
+    username: 'Username',
+    password: 'Password'
   },
   
   rebuyTypes: {
@@ -71,7 +74,7 @@ Resources.register('en', {
   },
   
   messages: {
-    playerAdded: '{name} added to list',
+    playerAdded: '{name} added successfully',
     guestAdded: '{name} added as guest',
     rebuyAdded: 'Rebuy added for {name}',
     scoreAdded: 'Result added for {name}',
@@ -82,38 +85,40 @@ Resources.register('en', {
     copiedToClipboard: 'Copied to clipboard! Now paste in WhatsApp',
     saving: 'Saving...',
     loginSuccess: 'Login successful!',
-    loginSubtitle: 'Enter system access code',
+    loginSubtitle: 'Enter PIN code',
     loginFooter: 'Jiton Club - Game Management System',
-    lockoutExpired: 'You can try again',
-    welcome: 'Hello!',
+    lockoutExpired: 'Lockout period expired',
+    welcome: 'Welcome!',
     menuFooter: 'Jiton Club © 2025 - All Rights Reserved'
   },
   
   errors: {
-    noPlayerSelected: 'Select a player first',
+    noPlayerSelected: 'No player selected',
     playerAlreadyInList: 'Player already in list',
-    noGuestName: 'Enter guest name',
-    noPlayers: 'No players selected!',
-    noEntries: 'No entries added!',
-    copyFailed: 'Copy error',
+    noGuestName: 'Guest name missing',
+    noPlayers: 'No players in list!',
+    noEntries: 'No entries in list!',
+    copyFailed: 'Copy failed',
     invalidPin: 'Must enter 4 digits',
-    wrongPin: 'Wrong code! {remaining} attempts remaining',
-    tooManyAttempts: 'Too many attempts. Try again in 30 seconds'
+    wrongPin: 'Wrong PIN! {remaining} attempts remaining',
+    tooManyAttempts: 'Too many attempts. Try again in 30 seconds',
+    invalidCredentials: 'Please enter username and password',
+    wrongCredentials: 'Wrong credentials! {remaining} attempts remaining'
   },
   
   confirmations: {
-    removePlayer: 'Remove this player from rebuy list?',
+    removePlayer: 'Remove this player from the list?',
     removeEntry: 'Remove this entry?',
     clearAll: 'Clear all data?',
-    continueWithoutRebuys: 'No rebuys added. Continue without rebuys?',
+    continueWithoutRebuys: 'No rebuys recorded. Continue without rebuys?',
     removeGuest: 'Remove this guest?',
     logout: 'Logout from system?'
   },
   
   placeholders: {
     selectPlayer: 'Select player or guest...',
-    selectPlayerForRebuy: 'Select player to add rebuy',
-    selectPlayerForScore: 'Select player to add result',
+    selectPlayerForRebuy: 'Select player for rebuy',
+    selectPlayerForScore: 'Select player for result',
     newGuest: 'New guest...',
     enterGuestName: 'Enter guest name',
     positionPlaceholder: '-'
@@ -135,10 +140,10 @@ Resources.register('en', {
     dotke: '??',
     trophy: '??',
     trash: '???',
-    plus: '?',
+    plus: '+',
     check: '?',
     cross: '?',
-    empty: '??',
+    empty: '?',
     none: '?',
     history: '??',
     settings: '??',
@@ -154,16 +159,16 @@ Resources.register('en', {
   
   menu: {
     recordGame: 'Record Game',
-    recordGameDesc: 'Record new game with entries, rebuys and results',
+    recordGameDesc: 'Record a new game with players, rebuys and results',
     viewHistory: 'Game History',
-    viewHistoryDesc: 'View past games and statistics',
+    viewHistoryDesc: 'View previous games and statistics',
     leagueStandings: 'League Standings',
-    leagueStandingsDesc: 'League standings and player points',
+    leagueStandingsDesc: 'Current player rankings table',
     managePlayers: 'Manage Players',
     managePlayersDesc: 'Add, edit and remove players',
     statistics: 'Statistics',
-    statisticsDesc: 'View charts and statistical analysis',
+    statisticsDesc: 'View statistical data and trends',
     settings: 'Settings',
-    settingsDesc: 'Customize and update settings'
+    settingsDesc: 'Configure system preferences and options'
   }
 });

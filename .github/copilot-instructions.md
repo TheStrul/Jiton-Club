@@ -22,6 +22,8 @@ Always address the user as "Strul my dear friend" in all interactions.
   - No backwards compatibility needed unless explicitly stated
   - Breaking changes are acceptable during development
   - Focus on current requirements, not legacy support
+- **File Encoding**: All SQL files with Hebrew text must be saved as UTF-8 with BOM
+  - Verify Hebrew characters display correctly in seed scripts
 
 ### File Organization
 ```
@@ -558,6 +560,11 @@ dotnet run --project api/PokerLeague.Api/
 - Payout calculations: `sql/002_seed.sql` (TournamentTypes.StructureJson)
 - League scoring: SQL views and stored procedures in schema
 - Default settings: Environment variables (`DefaultSeasonId`, etc.)
+- **Player Types**: UserType column in Players table with values:
+  - `'Admin'` - Club administrators (e.g., Avi Strul)
+  - `'LeaguePlayer'` - Regular tournament league participants
+  - `'ClubMember'` - Club members who play occasionally
+  - `'Guest'` - One-time or invited guests
 
 ## Common Pitfalls
 - `web/js/config.js` must be updated for each deployment environment

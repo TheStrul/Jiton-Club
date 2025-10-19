@@ -8,43 +8,64 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PokerLeague.Api", "api\Poke
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "web", "web", "{A1B2C3D4-E5F6-4A5B-8C9D-1E2F3A4B5C6D}"
 	ProjectSection(SolutionItems) = preProject
+		web\dashboard.html = web\dashboard.html
 		web\easy-game-recorder.html = web\easy-game-recorder.html
-		web\host-console.html = web\host-console.html
+		web\host.html = web\host.html
 		web\index.html = web\index.html
-		web\rsvp.html = web\rsvp.html
+		web\login.html = web\login.html
+		web\menu.html = web\menu.html
 	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "web-js", "web-js", "{B2C3D4E5-F6A7-4B5C-9D1E-2F3A4B5C6D7E}"
 	ProjectSection(SolutionItems) = preProject
+		web\js\auth.js = web\js\auth.js
 		web\js\config.js = web\js\config.js
+		web\js\game-app.js = web\js\game-app.js
+		web\js\login-app.js = web\js\login-app.js
+		web\js\menu-app.js = web\js\menu-app.js
+		web\js\rebuy-app.js = web\js\rebuy-app.js
 		web\js\resources.js = web\js\resources.js
-		web\js\rsvp.js = web\js\rsvp.js
 	EndProjectSection
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "sql", "sql", "{C3D4E5F6-A7B8-4C5D-9E1F-3A4B5C6D7E8F}"
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "web-js-resources", "web-js-resources", "{C4D5E6F7-A8B9-4C5D-9E1F-3A4B5C6D7E8F}"
+	ProjectSection(SolutionItems) = preProject
+		web\js\resources\resources.en.js = web\js\resources\resources.en.js
+		web\js\resources\resources.he.js = web\js\resources\resources.he.js
+		web\js\resources\resources.js = web\js\resources\resources.js
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "sql", "sql", "{D5E6F7A8-B9C1-4D5E-9F1A-4B5C6D7E8F9A}"
 	ProjectSection(SolutionItems) = preProject
 		sql\001_schema.sql = sql\001_schema.sql
 		sql\002_seed.sql = sql\002_seed.sql
 	EndProjectSection
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "infra", "infra", "{D4E5F6A7-B8C9-4D5E-9F1A-4B5C6D7E8F9A}"
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "infra", "infra", "{E6F7A8B9-C1D2-4E5F-9A1B-5C6D7E8F9A0B}"
 	ProjectSection(SolutionItems) = preProject
 		infra\main.bicep = infra\main.bicep
 	EndProjectSection
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".github", ".github", "{E5F6A7B8-C9D1-4E5F-9A1B-5C6D7E8F9A0B}"
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".github", ".github", "{F7A8B9C1-D2E3-4F5A-9B1C-6D7E8F9A0B1C}"
 	ProjectSection(SolutionItems) = preProject
 		.github\copilot-instructions.md = .github\copilot-instructions.md
 	EndProjectSection
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{F6A7B8C9-D1E2-4F5A-9B1C-6D7E8F9A0B1C}"
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{A8B9C1D2-E3F4-4A5B-9C1D-7E8F9A0B1C2D}"
 	ProjectSection(SolutionItems) = preProject
 		.gitignore = .gitignore
 		ACTION_PLAN.md = ACTION_PLAN.md
+		CREATE-DESKTOP-SHORTCUT.bat = CREATE-DESKTOP-SHORTCUT.bat
+		deploy-to-azure.ps1 = deploy-to-azure.ps1
 		LOCALDEV_SETUP.md = LOCALDEV_SETUP.md
 		PROJECT_STATUS.md = PROJECT_STATUS.md
 		README.md = README.md
+		reset-and-start.ps1 = reset-and-start.ps1
 		ROADMAP.md = ROADMAP.md
+		START-ALL.ps1 = START-ALL.ps1
+		START-FRONTEND.bat = START-FRONTEND.bat
+		START-FRONTEND.ps1 = START-FRONTEND.ps1
+		test-api.ps1 = test-api.ps1
+		TROUBLESHOOTING.md = TROUBLESHOOTING.md
 	EndProjectSection
 EndProject
 Global
@@ -64,6 +85,7 @@ Global
 	GlobalSection(NestedProjects) = preSolution
 		{05E296D8-4E39-DC63-7D1C-3707A54AD9C5} = {D82C56D6-B2CD-F611-9E31-04638F7EC30E}
 		{B2C3D4E5-F6A7-4B5C-9D1E-2F3A4B5C6D7E} = {A1B2C3D4-E5F6-4A5B-8C9D-1E2F3A4B5C6D}
+		{C4D5E6F7-A8B9-4C5D-9E1F-3A4B5C6D7E8F} = {B2C3D4E5-F6A7-4B5C-9D1E-2F3A4B5C6D7E}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {97B3AD1A-A503-4050-AFA6-76D3150ECED4}

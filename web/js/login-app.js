@@ -1,138 +1,154 @@
-// Login App - Authentication Controller
-class LoginApp {
-  constructor() {
-    this.attempts = 0;
-    this.maxAttempts = 5;
-    this.init();
-  }
-  
-  init() {
-    // Check if already authenticated
-    if (Auth.isAuthenticated()) {
-      this.redirectToApp();
-      return;
-    }
-    
-    this.initializeUIText();
-    this.setupEventListeners();
-    
-    // Focus on PIN input
-    setTimeout(() => DOM.$('pinInput').focus(), 300);
-  }
-  
-  initializeUIText() {
-    try {
-      document.title = Resources.get('titles.login');
-      DOM.$('loginTitle').innerHTML = `${Resources.icon('game')} ${Resources.get('titles.login')}`;
-      DOM.$('loginSubtitle').textContent = Resources.get('messages.loginSubtitle');
-      DOM.$('pinLabel').textContent = Resources.get('labels.pin');
-      DOM.$('loginBtn').textContent = `${Resources.icon('check')} ${Resources.get('buttons.login')}`;
-      DOM.$('loginFooter').textContent = Resources.get('messages.loginFooter');
-    } catch (error) {
-      console.error('Failed to initialize UI text:', error);
-    }
-  }
-  
-  setupEventListeners() {
-    const form = DOM.$('loginForm');
-    const pinInput = DOM.$('pinInput');
-    
-    // Form submit
-    form.addEventListener('submit', (e) => {
-      e.preventDefault();
-      this.handleLogin();
-    });
-    
-    // Auto-submit when 4 digits entered
-    pinInput.addEventListener('input', (e) => {
-      // Only allow numbers
-      e.target.value = e.target.value.replace(/[^0-9]/g, '');
-      
-      // Auto-submit when 4 digits
-      if (e.target.value.length === 4) {
-        setTimeout(() => this.handleLogin(), 300);
-      }
-    });
-    
-    // Clear on focus
-    pinInput.addEventListener('focus', () => {
-      pinInput.select();
-    });
-  }
-  
-  handleLogin() {
-    const pinInput = DOM.$('pinInput');
-    const pin = pinInput.value.trim();
-    
-    // Validate PIN length
-    if (pin.length !== 4) {
-      UI.showMessage(Resources.get('errors.invalidPin'), 'error');
-      pinInput.value = '';
-      pinInput.focus();
-      return;
-    }
-    
-    // Check attempts
-    if (this.attempts >= this.maxAttempts) {
-      UI.showMessage(Resources.get('errors.tooManyAttempts'), 'error');
-      this.lockout();
-      return;
-    }
-    
-    // Attempt authentication
-    if (Auth.authenticate(pin)) {
-      UI.showMessage(Resources.get('messages.loginSuccess'), 'success', 1000);
-      setTimeout(() => this.redirectToApp(), 1000);
+/**
+ * Login Page App
+ * Handles user authentication via PIN code
+ */
+
+function initializeLoginApp() {
+    // Check if PokerAuth is available
+    if (typeof PokerAuth !== 'undefined') {
+        console.log('✅ Auth module loaded successfully');
+        // Check if already logged in
+        if (PokerAuth.isAuthenticated()) {
+            console.log('User already authenticated, redirecting to menu...');
+            window.location.href = 'menu.html';
+            return;
+        }
     } else {
-      this.attempts++;
-      const remaining = this.maxAttempts - this.attempts;
-      
-      if (remaining > 0) {
-        UI.showMessage(
-          Resources.get('errors.wrongPin', { remaining }), 
-          'error'
-        );
-      } else {
-        UI.showMessage(Resources.get('errors.tooManyAttempts'), 'error');
-        this.lockout();
-      }
-      
-      pinInput.value = '';
-      pinInput.focus();
+        console.error('❌ Auth module not loaded, skipping authentication check');
     }
-  }
-  
-  lockout() {
-    const pinInput = DOM.$('pinInput');
-    const loginBtn = DOM.$('loginBtn');
+
+    // Initialize UI text from resources
+    initializeUI();
     
-    pinInput.disabled = true;
-    loginBtn.disabled = true;
-    
-    // Re-enable after 30 seconds
-    setTimeout(() => {
-      this.attempts = 0;
-      pinInput.disabled = false;
-      loginBtn.disabled = false;
-      pinInput.value = '';
-      pinInput.focus();
-      UI.showMessage(Resources.get('messages.lockoutExpired'), 'info');
-    }, 30000);
-  }
-  
-  redirectToApp() {
-    const redirectUrl = Auth.getRedirectUrl();
-    window.location.href = redirectUrl;
-  }
+    // Setup login form
+    setupLoginForm();
 }
 
-// Initialize app on DOM ready
-document.addEventListener('DOMContentLoaded', () => {
-  try {
-    console.log('Initializing Login App...');
-    new LoginApp();
-  } catch (error) {
-    console.error('Failed to initialize login app:', error);
-    alert('Failed to initialize login page. Check console for details.');
-  }
-});
+/**
+ * Initialize UI text from resources
+ */
+function initializeUI() {
+    try {
+        // Set page title
+        document.getElementById('page-title').textContent = Resources.get('titles.login') || 'System Login';
+        document.getElementById('login-title').textContent = Resources.get('messages.loginSubtitle') || 'Enter credentials';
+        
+        // Set form labels
+        document.getElementById('username-label').textContent = Resources.get('labels.username') || 'Username';
+        document.getElementById('password-label').textContent = Resources.get('labels.password') || 'Password';
+        
+        // Set button text
+        document.getElementById('login-button').textContent = Resources.get('buttons.login') || 'Login';
+        
+        // Set footer
+        const footer = document.getElementById('login-footer');
+        if (footer) {
+            footer.textContent = Resources.get('messages.loginFooter') || 'Jiton Club - Game Management System';
+        }
+        
+        console.log('UI text initialized from resources');
+    } catch (error) {
+        console.error('Failed to initialize UI text:', error);
+        // Fallback to hardcoded English if resources fail
+        document.getElementById('page-title').textContent = 'System Login';
+        document.getElementById('login-title').textContent = 'Enter credentials';
+    }
+}
+
+/**
+ * Setup login form submission
+ */
+function setupLoginForm() {
+    const form = document.getElementById('login-form');
+    const usernameInput = document.getElementById('username');
+    const passwordInput = document.getElementById('password');
+    const loginButton = document.getElementById('login-button');
+    const errorMessage = document.getElementById('error-message');
+
+    form.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        
+        const username = usernameInput.value.trim();
+        const password = passwordInput.value.trim();
+        
+        // Validate inputs
+        if (!username || !password) {
+            showError(Resources.get('errors.invalidCredentials') || 'Please enter username and password');
+            return;
+        }
+        
+        // Disable form during login
+        loginButton.disabled = true;
+        loginButton.textContent = Resources.get('messages.saving') || 'Logging in...';
+        hideError();
+        
+        try {
+            console.log('Attempting login...');
+            
+            const result = PokerAuth.login(username, password);
+            
+            if (result.success) {
+                console.log('Login successful!');
+                showSuccess(Resources.get('messages.loginSuccess') || 'Login successful!');
+                
+                // Redirect to menu after short delay
+                setTimeout(() => {
+                    const redirectUrl = PokerAuth.getRedirectUrl();
+                    window.location.href = redirectUrl;
+                }, 500);
+            } else {
+                console.error('Login failed:', result.message);
+                const errorMsg = Resources.get('errors.wrongCredentials', { remaining: result.attemptsRemaining }) || result.message;
+                showError(errorMsg);
+                
+                // Re-enable form
+                loginButton.disabled = false;
+                loginButton.textContent = Resources.get('buttons.login') || 'Login';
+                passwordInput.value = '';
+                passwordInput.focus();
+            }
+        } catch (error) {
+            console.error('Login error:', error);
+            showError(Resources.get('errors.tooManyAttempts') || 'Too many attempts. Try again in 30 seconds');
+            
+            // Re-enable form
+            loginButton.disabled = false;
+            loginButton.textContent = Resources.get('buttons.login') || 'Login';
+        }
+    });
+    
+    // Focus on username input
+    usernameInput.focus();
+}
+
+/**
+ * Show error message
+ */
+function showError(message) {
+    const errorDiv = document.getElementById('error-message');
+    errorDiv.textContent = message;
+    errorDiv.style.background = 'rgba(244, 67, 54, 0.2)';
+    errorDiv.style.color = '#f44336';
+    errorDiv.classList.add('show');
+}
+
+/**
+ * Hide error message
+ */
+function hideError() {
+    const errorDiv = document.getElementById('error-message');
+    errorDiv.classList.remove('show');
+}
+
+/**
+ * Show success message
+ */
+function showSuccess(message) {
+    const errorDiv = document.getElementById('error-message');
+    errorDiv.textContent = message;
+    errorDiv.style.background = 'rgba(76, 175, 80, 0.2)';
+    errorDiv.style.color = '#4CAF50';
+    errorDiv.classList.add('show');
+}
+
+// Note: initializeLoginApp() is called from login.html after DOM is ready and all modules are loaded

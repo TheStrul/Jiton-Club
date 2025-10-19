@@ -39,15 +39,6 @@ public class WeeklyReportFunction
         }
     }
 
-    // Runs every Friday 06:00 UTC (~09:00 Israel when on IDT)
-    [Function("WeeklyReportTimer")]
-    public async Task RunTimer([TimerTrigger("0 0 6 * * 5")] TimerInfo timer)
-    {
-        // Default season 1 for MVP; can be configured via env later
-        int seasonId = int.TryParse(Environment.GetEnvironmentVariable("DefaultSeasonId"), out var s) ? s : 1;
-        await GenerateAndUploadPdf(seasonId);
-    }
-
     [Function("WeeklyReportHttp")]
     public async Task<HttpResponseData> RunOnDemand([HttpTrigger(AuthorizationLevel.Anonymous, "post", Route = "league/{seasonId:int}/report")] HttpRequestData req, int seasonId)
     {

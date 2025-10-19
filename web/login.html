@@ -1,18 +1,14 @@
 <!DOCTYPE html>
 <html dir="rtl" lang="he">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>??????? - ???? ???? ?'????</title>
+    <title id="page-title">Loading...</title>
+    <link rel="stylesheet" href="css/main.css">
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
+        /* Login-specific styles */
         body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
             min-height: 100vh;
             display: flex;
@@ -28,354 +24,127 @@
             padding: 40px;
             max-width: 400px;
             width: 100%;
-            box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.37);
-            border: 1px solid rgba(255, 255, 255, 0.18);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
         }
 
-        .logo {
+        .login-header {
             text-align: center;
             margin-bottom: 30px;
         }
 
-        .logo-icon {
-            font-size: 64px;
+        .login-title {
+            color: #ffd700;
+            font-size: 2em;
             margin-bottom: 10px;
         }
 
-        .logo-text {
-            color: #ffd700;
-            font-size: 28px;
-            font-weight: bold;
-            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
-        }
-
-        .logo-subtitle {
+        .login-subtitle {
             color: rgba(255, 255, 255, 0.7);
-            font-size: 14px;
-            margin-top: 5px;
+            font-size: 1.1em;
         }
 
         .form-group {
-            margin-bottom: 25px;
+            margin-bottom: 20px;
         }
 
-        label {
+        .form-label {
             display: block;
-            color: rgba(255, 255, 255, 0.9);
+            color: white;
             margin-bottom: 8px;
-            font-size: 14px;
-            font-weight: 500;
+            font-weight: bold;
         }
 
-        input {
+        .form-input {
             width: 100%;
-            padding: 15px;
-            border: 2px solid rgba(255, 255, 255, 0.2);
-            border-radius: 10px;
+            padding: 12px;
+            border: 2px solid rgba(255, 215, 0, 0.3);
+            border-radius: 8px;
             background: rgba(255, 255, 255, 0.1);
             color: white;
-            font-size: 16px;
-            transition: all 0.3s ease;
+            font-size: 1em;
         }
 
-        input:focus {
+        .form-input:focus {
             outline: none;
             border-color: #ffd700;
-            background: rgba(255, 255, 255, 0.15);
         }
 
-        input::placeholder {
-            color: rgba(255, 255, 255, 0.5);
-        }
-
-        .btn {
+        .login-button {
             width: 100%;
             padding: 15px;
+            background: linear-gradient(135deg, #ffd700 0%, #ffed4e 100%);
             border: none;
-            border-radius: 10px;
-            font-size: 18px;
+            border-radius: 8px;
+            color: #1a1a2e;
+            font-size: 1.1em;
             font-weight: bold;
             cursor: pointer;
-            transition: all 0.3s ease;
-            margin-top: 10px;
+            transition: transform 0.2s;
         }
 
-        .btn-primary {
-            background: linear-gradient(135deg, #ffd700 0%, #ffed4e 100%);
-            color: #1a1a2e;
-            box-shadow: 0 4px 15px rgba(255, 215, 0, 0.3);
+        .login-button:hover {
+            transform: scale(1.02);
         }
 
-        .btn-primary:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 6px 20px rgba(255, 215, 0, 0.4);
-        }
-
-        .btn-primary:active {
-            transform: translateY(0);
-        }
-
-        .btn-primary:disabled {
-            opacity: 0.5;
-            cursor: not-allowed;
-            transform: none;
-        }
-
-        .message {
-            padding: 12px;
-            border-radius: 10px;
-            margin-bottom: 20px;
-            text-align: center;
-            font-size: 14px;
-            display: none;
-        }
-
-        .message.error {
+        .error-message {
             background: rgba(244, 67, 54, 0.2);
-            border: 1px solid rgba(244, 67, 54, 0.5);
             color: #ff6b6b;
-        }
-
-        .message.success {
-            background: rgba(76, 175, 80, 0.2);
-            border: 1px solid rgba(76, 175, 80, 0.5);
-            color: #69f0ae;
-        }
-
-        .message.info {
-            background: rgba(33, 150, 243, 0.2);
-            border: 1px solid rgba(33, 150, 243, 0.5);
-            color: #64b5f6;
-        }
-
-        .forgot-password {
-            text-align: center;
-            margin-top: 20px;
-        }
-
-        .forgot-password a {
-            color: rgba(255, 255, 255, 0.7);
-            text-decoration: none;
-            font-size: 14px;
-            transition: color 0.3s ease;
-        }
-
-        .forgot-password a:hover {
-            color: #ffd700;
-        }
-
-        .loading {
+            padding: 12px;
+            border-radius: 8px;
+            margin-bottom: 20px;
             display: none;
-            text-align: center;
-            color: rgba(255, 255, 255, 0.7);
-            margin-top: 10px;
         }
 
-        .loading.show {
+        .error-message.show {
             display: block;
-        }
-
-        .spinner {
-            border: 3px solid rgba(255, 255, 255, 0.1);
-            border-top: 3px solid #ffd700;
-            border-radius: 50%;
-            width: 30px;
-            height: 30px;
-            animation: spin 1s linear infinite;
-            margin: 10px auto;
-        }
-
-        @keyframes spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
-        }
-
-        .version {
-            text-align: center;
-            color: rgba(255, 255, 255, 0.3);
-            font-size: 12px;
-            margin-top: 30px;
-        }
-
-        @media (max-width: 480px) {
-            .login-container {
-                padding: 30px 20px;
-            }
-
-            .logo-text {
-                font-size: 24px;
-            }
-
-            .logo-icon {
-                font-size: 48px;
-            }
         }
     </style>
 </head>
+
 <body>
     <div class="login-container">
-        <div class="logo">
-            <div class="logo-icon">??</div>
-            <div class="logo-text">???? ???? ?'????</div>
-            <div class="logo-subtitle">Jiton Club Poker League</div>
+        <div class="login-header">
+            <h1 class="login-title" id="login-title">...</h1>
+            <p class="login-subtitle" id="login-subtitle">...</p>
         </div>
 
-        <div id="message" class="message"></div>
+        <div id="error-message" class="error-message"></div>
 
-        <form id="loginForm">
+        <form id="login-form">
             <div class="form-group">
-                <label for="username">?? ?????</label>
-                <input 
-                    type="text" 
-                    id="username" 
-                    name="username" 
-                    placeholder="??? ?? ?????"
-                    required
-                    autocomplete="username"
-                    autofocus
-                >
+                <label class="form-label" id="username-label" for="username">...</label>
+                <input type="text" id="username" class="form-input" autocomplete="username" required>
             </div>
 
             <div class="form-group">
-                <label for="password">?????</label>
-                <input 
-                    type="password" 
-                    id="password" 
-                    name="password" 
-                    placeholder="??? ?????"
-                    required
-                    autocomplete="current-password"
-                >
+                <label class="form-label" id="password-label" for="password">...</label>
+                <input type="password" id="password" class="form-input" autocomplete="current-password" required>
             </div>
 
-            <button type="submit" class="btn btn-primary" id="loginBtn">
-                ?????
-            </button>
+            <button type="submit" class="login-button" id="login-button">...</button>
         </form>
-
-        <div class="loading" id="loading">
-            <div class="spinner"></div>
-            <div>?????...</div>
-        </div>
-
-        <div class="forgot-password">
-            <a href="#" id="forgotPasswordLink">????? ?????</a>
-        </div>
-
-        <div class="version">v1.0.0</div>
     </div>
 
+    <!-- Load in order: config FIRST, then resources manager, THEN language files, then auth, then app -->
     <script src="js/config.js"></script>
-    <script src="js/auth.js"></script>
+    <script src="js/resources.js"></script>
+    <script src="js/resources/resources.he.js"></script>
+    <script src="js/resources/resources.en.js"></script>
+    <script src="js/utils/auth.js"></script>
+    <script src="js/login-app.js"></script>
+
     <script>
-        const loginForm = document.getElementById('loginForm');
-        const usernameInput = document.getElementById('username');
-        const passwordInput = document.getElementById('password');
-        const loginBtn = document.getElementById('loginBtn');
-        const loading = document.getElementById('loading');
-        const messageDiv = document.getElementById('message');
-
-        // Check if already logged in
-        (async function() {
-            if (authService.isAuthenticated()) {
-                const isValid = await authService.validateSession();
-                if (isValid) {
-                    redirectAfterLogin();
-                    return;
-                }
-            }
-        })();
-
-        // Handle form submission
-        loginForm.addEventListener('submit', async (e) => {
-            e.preventDefault();
-
-            const username = usernameInput.value.trim();
-            const password = passwordInput.value;
-
-            if (!username || !password) {
-                showMessage('?? ???? ?? ?? ?????', 'error');
-                return;
-            }
-
-            // Show loading
-            loginBtn.disabled = true;
-            loading.classList.add('show');
-            hideMessage();
-
-            try {
-                const result = await authService.login(username, password);
-
-                if (result.success) {
-                    showMessage(result.message, 'success');
-                    
-                    // Wait a moment to show success message
-                    setTimeout(() => {
-                        redirectAfterLogin();
-                    }, 500);
-                } else {
-                    showMessage(result.message, 'error');
-                    passwordInput.value = '';
-                    passwordInput.focus();
-                }
-            } catch (error) {
-                console.error('Login error:', error);
-                showMessage('????? ????????. ??? ??? ????? ????.', 'error');
-            } finally {
-                loginBtn.disabled = false;
-                loading.classList.remove('show');
-            }
-        });
-
-        // Redirect after successful login
-        function redirectAfterLogin() {
-            const urlParams = new URLSearchParams(window.location.search);
-            const redirect = urlParams.get('redirect');
-            
-            if (redirect) {
-                window.location.href = redirect;
+        // Initialize the login app after all scripts are loaded
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('DOM loaded, checking auth module...');
+            if (typeof PokerAuth !== 'undefined') {
+                console.log('Auth module loaded successfully');
             } else {
-                // Default redirect based on role
-                const user = authService.currentUser;
-                if (user) {
-                    if (user.role === 'Admin') {
-                        window.location.href = '/admin-dashboard.html';
-                    } else if (user.role === 'Host') {
-                        window.location.href = '/host-console.html';
-                    } else {
-                        window.location.href = '/index.html';
-                    }
-                } else {
-                    window.location.href = '/index.html';
-                }
+                console.error('Auth module failed to load!');
             }
-        }
-
-        // Show message
-        function showMessage(text, type = 'info') {
-            messageDiv.textContent = text;
-            messageDiv.className = `message ${type}`;
-            messageDiv.style.display = 'block';
-        }
-
-        // Hide message
-        function hideMessage() {
-            messageDiv.style.display = 'none';
-        }
-
-        // Forgot password (placeholder)
-        document.getElementById('forgotPasswordLink').addEventListener('click', (e) => {
-            e.preventDefault();
-            showMessage('??? ????? ?????? ?????? ?????', 'info');
-        });
-
-        // Enter key on username moves to password
-        usernameInput.addEventListener('keypress', (e) => {
-            if (e.key === 'Enter') {
-                e.preventDefault();
-                passwordInput.focus();
-            }
+            initializeLoginApp();
         });
     </script>
 </body>
+
 </html>

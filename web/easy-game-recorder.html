@@ -111,12 +111,26 @@
   <!-- JavaScript modules in dependency order -->
   <script src="js/config.js" charset="utf-8"></script>
   <script src="js/resources.js" charset="utf-8"></script>
+  <script src="js/resources/resources.he.js" charset="utf-8"></script>
+  <script src="js/resources/resources.en.js" charset="utf-8"></script>
   <script src="js/utils/storage.js" charset="utf-8"></script>
   <script src="js/utils/helpers.js" charset="utf-8"></script>
   <script src="js/utils/auth.js" charset="utf-8"></script>
   <script>
     // Require authentication before loading app
-    Auth.requireAuth();
+    document.addEventListener('DOMContentLoaded', function() {
+      if (typeof PokerAuth !== 'undefined') {
+        if (!PokerAuth.isAuthenticated()) {
+          console.log('User not authenticated, redirecting to login...');
+          window.location.href = 'login.html';
+          return;
+        }
+        console.log('✅ User authenticated, loading game recorder...');
+      } else {
+        console.error('❌ Auth module not loaded!');
+        window.location.href = 'login.html';
+      }
+    });
   </script>
   <script src="js/data/DataService.js" charset="utf-8"></script>
   <script src="js/data/ApiService.js" charset="utf-8"></script>

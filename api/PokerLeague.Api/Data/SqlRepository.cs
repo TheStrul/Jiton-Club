@@ -171,7 +171,7 @@ ORDER BY p.TotalPoints DESC, pl.FullName ASC;", new { seasonId });
     {
         using var con = await OpenAsync();
         return await con.QueryAsync(@"
-SELECT PlayerId, FullName, Phone, HebrewNickName, UserType
+SELECT PlayerId, FullName, NickName, HebrewNickName, Phone, UserType, IsActive
 FROM Players 
 WHERE IsActive = 1 
 ORDER BY FullName");
