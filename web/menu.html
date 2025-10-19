@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html dir="rtl" lang="he">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="mobile-web-app-capable" content="yes">
+  <title>????? ???? - ?'????</title>
+  
+  <!-- CSS files in order -->
+  <link rel="stylesheet" href="css/main.css">
+  <link rel="stylesheet" href="css/layout.css">
+  <link rel="stylesheet" href="css/components.css">
+</head>
+<body>
+  <!-- Message Toast -->
+  <div id="message" class="message"></div>
+
+  <div class="container">
+    <!-- Header -->
+    <div class="header dashboard-header">
+      <h1 id="dashboardTitle"><!-- From JS --></h1>
+      <div class="user-info">
+        <div class="language-switcher">
+          <button class="btn-lang" onclick="switchLanguage('he')" id="btnLangHe">??</button>
+          <button class="btn-lang" onclick="switchLanguage('en')" id="btnLangEn">EN</button>
+        </div>
+        <span id="welcomeMessage"><!-- From JS --></span>
+        <button class="btn-logout" onclick="logout()" id="logoutBtn">
+          <!-- Text from JS -->
+        </button>
+      </div>
+    </div>
+
+    <!-- Menu Grid -->
+    <div class="menu-grid" id="menuGrid">
+      <!-- Populated by JS -->
+    </div>
+
+    <!-- Footer -->
+    <div class="dashboard-footer">
+      <p id="footerText"><!-- From JS --></p>
+    </div>
+  </div>
+
+  <!-- JavaScript modules in dependency order -->
+  <script src="js/config.js" charset="utf-8"></script>
+  <script src="js/resources.js" charset="utf-8"></script>
+  <script src="js/utils/storage.js" charset="utf-8"></script>
+  <script src="js/utils/helpers.js" charset="utf-8"></script>
+  <script src="js/utils/auth.js" charset="utf-8"></script>
+  <script>
+    // Require authentication before loading menu
+    Auth.requireAuth();
+  </script>
+  <script src="js/menu-app.js" charset="utf-8"></script>
+</body>
+</html>

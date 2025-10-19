@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html dir="rtl" lang="he">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="mobile-web-app-capable" content="yes">
+  <title>??????? - ?'????</title>
+  
+  <!-- CSS files in order -->
+  <link rel="stylesheet" href="css/main.css">
+  <link rel="stylesheet" href="css/layout.css">
+  <link rel="stylesheet" href="css/components.css">
+</head>
+<body class="login-page">
+  <!-- Message Toast -->
+  <div id="message" class="message"></div>
+
+  <div class="login-container">
+    <div class="login-card">
+      <!-- Logo/Header -->
+      <div class="login-header">
+        <h1 id="loginTitle"><!-- From JS --></h1>
+        <p id="loginSubtitle"><!-- From JS --></p>
+      </div>
+
+      <!-- Login Form -->
+      <form id="loginForm" class="login-form">
+        <div class="form-group">
+          <label for="pinInput" id="pinLabel"><!-- From JS --></label>
+          <input 
+            type="password" 
+            id="pinInput" 
+            class="pin-input" 
+            inputmode="numeric"
+            maxlength="4"
+            placeholder="----"
+            autocomplete="off"
+            autofocus>
+        </div>
+
+        <button type="submit" class="btn btn-primary btn-login" id="loginBtn">
+          <!-- Text from JS -->
+        </button>
+      </form>
+
+      <!-- Footer -->
+      <div class="login-footer">
+        <p id="loginFooter"><!-- From JS --></p>
+      </div>
+    </div>
+  </div>
+
+  <!-- JavaScript modules in dependency order -->
+  <script src="js/config.js" charset="utf-8"></script>
+  <script src="js/resources.js" charset="utf-8"></script>
+  <script src="js/utils/storage.js" charset="utf-8"></script>
+  <script src="js/utils/helpers.js" charset="utf-8"></script>
+  <script src="js/utils/auth.js" charset="utf-8"></script>
+  <script src="js/login-app.js" charset="utf-8"></script>
+</body>
+</html>

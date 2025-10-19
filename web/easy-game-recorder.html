@@ -32,7 +32,12 @@
   <div class="container">
     <!-- Header -->
     <div class="header">
-      <h1 id="pageTitle"><!-- From JS --></h1>
+      <div class="header-nav">
+        <button class="btn-back" onclick="goToMenu()" id="backBtn">
+          <!-- Text from JS -->
+        </button>
+        <h1 id="pageTitle"><!-- From JS --></h1>
+      </div>
       <div class="date" id="currentDate"></div>
     </div>
 
@@ -108,6 +113,11 @@
   <script src="js/resources.js" charset="utf-8"></script>
   <script src="js/utils/storage.js" charset="utf-8"></script>
   <script src="js/utils/helpers.js" charset="utf-8"></script>
+  <script src="js/utils/auth.js" charset="utf-8"></script>
+  <script>
+    // Require authentication before loading app
+    Auth.requireAuth();
+  </script>
   <script src="js/data/DataService.js" charset="utf-8"></script>
   <script src="js/data/MockService.js" charset="utf-8"></script>
   <script src="js/data/ApiService.js" charset="utf-8"></script>

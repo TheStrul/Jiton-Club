@@ -34,6 +34,7 @@ class GameRecorderApp {
     try {
       document.title = Resources.get('titles.gameRecorder');
       DOM.$('pageTitle').textContent = `${Resources.icon('game')} ${Resources.get('titles.gameRecorder')} ${Resources.icon('game')}`;
+      DOM.$('backBtn').innerHTML = `? ${Resources.get('buttons.backToMenu')}`;
       DOM.$('summaryTitle').textContent = `${Resources.icon('stats')} ${Resources.get('titles.gameSummary')}`;
       DOM.$('totalEntriesLabel').textContent = Resources.get('labels.totalEntries');
       DOM.$('totalPlayersLabel').textContent = Resources.get('labels.totalPlayers');
@@ -682,6 +683,11 @@ class GameRecorderApp {
 
 // Global app instance
 let app;
+
+// Global navigation functions
+function goToMenu() {
+  window.location.href = 'menu.html';
+}
 
 document.addEventListener('DOMContentLoaded', () => {
   try {
