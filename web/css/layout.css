@@ -1,0 +1,106 @@
+/* Layout CSS - Page structure and grid */
+
+.container {
+  max-width: 100%;
+  margin: 0 auto;
+  padding: var(--spacing-md);
+  padding-bottom: 100px; /* Space for fixed footer */
+}
+
+.header {
+  text-align: center;
+  margin-bottom: var(--spacing-xl);
+  padding: var(--spacing-lg) var(--spacing-sm);
+  background: linear-gradient(135deg, var(--color-background-light), var(--color-background-dark));
+  border-radius: var(--border-radius-lg);
+  box-shadow: var(--shadow);
+}
+
+.header h1 {
+  color: var(--color-primary);
+  margin-bottom: var(--spacing-sm);
+  text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
+}
+
+.header .date {
+  font-size: var(--font-size-md);
+  color: var(--color-text-muted);
+  margin-top: var(--spacing-sm);
+}
+
+.section {
+  margin-bottom: var(--spacing-lg);
+}
+
+.section-title {
+  font-size: var(--font-size-xl);
+  color: var(--color-primary);
+  margin: var(--spacing-xl) 0 var(--spacing-md) 0;
+  padding: var(--spacing-md);
+  background: linear-gradient(135deg, rgba(255, 215, 0, 0.2), rgba(255, 215, 0, 0.1));
+  border-radius: var(--border-radius);
+  border-right: 5px solid var(--color-primary);
+  font-weight: bold;
+  text-shadow: 1px 1px 3px rgba(0,0,0,0.5);
+}
+
+.actions {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background: linear-gradient(180deg, transparent, var(--color-background) 20%);
+  padding: var(--spacing-lg) var(--spacing-md);
+  text-align: center;
+  z-index: var(--z-fixed);
+}
+
+/* Grid layouts */
+.grid-2 {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: var(--spacing-md);
+}
+
+.grid-3 {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: var(--spacing-sm);
+}
+
+/* Flex layouts */
+.flex {
+  display: flex;
+}
+
+.flex-column {
+  display: flex;
+  flex-direction: column;
+}
+
+.flex-center {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.flex-between {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.gap-sm { gap: var(--spacing-sm); }
+.gap-md { gap: var(--spacing-md); }
+.gap-lg { gap: var(--spacing-lg); }
+
+/* Responsive */
+@media (max-width: 600px) {
+  .container {
+    padding: var(--spacing-sm);
+  }
+  
+  .grid-3 {
+    grid-template-columns: 1fr;
+  }
+}

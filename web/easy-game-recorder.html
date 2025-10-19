@@ -2,798 +2,88 @@
 <html dir="rtl" lang="he">
 <head>
   <meta charset="UTF-8">
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="mobile-web-app-capable" content="yes">
   <title>רישום משחק - ג'יטון</title>
-  <style>
-    * { 
-      box-sizing: border-box; 
-      margin: 0; 
-      padding: 0; 
-      -webkit-tap-highlight-color: transparent;
-    }
-    
-    body {
-      font-family: Arial, sans-serif;
-      background: #1a1a2e;
-      color: #fff;
-      padding: 15px;
-      padding-bottom: 100px;
-      direction: rtl;
-      font-size: 16px;
-      overflow-x: hidden;
-    }
-
-    .container {
-      max-width: 100%;
-      margin: 0 auto;
-    }
-
-    .header {
-      text-align: center;
-      margin-bottom: 25px;
-      padding: 20px 10px;
-      background: linear-gradient(135deg, #16213e, #0f1624);
-      border-radius: 15px;
-      box-shadow: 0 5px 20px rgba(0,0,0,0.5);
-    }
-
-    .header h1 {
-      font-size: 2.2em;
-      color: #ffd700;
-      margin-bottom: 8px;
-      text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
-    }
-
-    .header .date {
-      font-size: 1.1em;
-      color: #aaa;
-      margin-top: 8px;
-    }
-
-    .info-bar {
-      background: linear-gradient(135deg, rgba(255, 215, 0, 0.2), rgba(255, 215, 0, 0.1));
-      padding: 20px;
-      border-radius: 15px;
-      margin-bottom: 20px;
-      text-align: center;
-      border: 2px solid rgba(255, 215, 0, 0.3);
-    }
-
-    .info-bar .big-number {
-      font-size: 3.5em;
-      font-weight: bold;
-      color: #ffd700;
-      margin: 10px 0;
-      text-shadow: 2px 2px 8px rgba(0,0,0,0.5);
-    }
-
-    .info-bar .label {
-      font-size: 1.3em;
-      color: #ddd;
-      font-weight: bold;
-    }
-
-    .quick-select {
-      display: flex;
-      gap: 10px;
-      margin-bottom: 20px;
-    }
-
-    .quick-select button {
-      flex: 1;
-      padding: 18px;
-      font-size: 1.2em;
-      border: 3px solid #ffd700;
-      background: rgba(255, 215, 0, 0.1);
-      color: #ffd700;
-      border-radius: 12px;
-      cursor: pointer;
-      font-weight: bold;
-      transition: all 0.2s;
-      touch-action: manipulation;
-    }
-
-    .quick-select button:active {
-      background: rgba(255, 215, 0, 0.3);
-      transform: scale(0.95);
-    }
-
-    .players-list {
-      display: flex;
-      flex-direction: column;
-      gap: 15px;
-      margin-bottom: 20px;
-    }
-
-    .player-card {
-      background: linear-gradient(135deg, rgba(255,255,255,0.1), rgba(255,255,255,0.05));
-      border: 3px solid transparent;
-      border-radius: 15px;
-      padding: 18px;
-      transition: all 0.2s;
-      touch-action: manipulation;
-    }
-
-    .player-card.selected {
-      border-color: #4CAF50;
-      background: linear-gradient(135deg, rgba(76, 175, 80, 0.3), rgba(76, 175, 80, 0.2));
-      box-shadow: 0 0 20px rgba(76, 175, 80, 0.4);
-    }
-
-    .player-checkbox {
-      display: flex;
-      align-items: center;
-      gap: 15px;
-      margin-bottom: 15px;
-      min-height: 50px;
-    }
-
-    .player-checkbox input[type="checkbox"] {
-      width: 40px;
-      height: 40px;
-      cursor: pointer;
-      flex-shrink: 0;
-      accent-color: #4CAF50;
-    }
-
-    .player-checkbox label {
-      font-size: 2em;
-      font-weight: bold;
-      cursor: pointer;
-      flex: 1;
-      user-select: none;
-      line-height: 1.2;
-    }
-
-    .player-inputs {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 12px;
-      padding-top: 15px;
-      border-top: 2px solid rgba(255,255,255,0.2);
-    }
-
-    .input-box {
-      display: flex;
-      flex-direction: column;
-      gap: 8px;
-    }
-
-    .input-box label {
-      font-size: 1.1em;
-      color: #ffd700;
-      font-weight: bold;
-    }
-
-    .input-box input {
-      padding: 18px 10px;
-      font-size: 2em;
-      border: 3px solid rgba(255,255,255,0.3);
-      border-radius: 12px;
-      background: rgba(0,0,0,0.4);
-      color: #fff;
-      text-align: center;
-      font-weight: bold;
-      width: 100%;
-      touch-action: manipulation;
-    }
-
-    .input-box input:focus {
-      outline: none;
-      border-color: #ffd700;
-      background: rgba(0,0,0,0.6);
-      box-shadow: 0 0 15px rgba(255, 215, 0, 0.3);
-    }
-
-    .input-box input::placeholder {
-      color: rgba(255,255,255,0.3);
-    }
-
-    /* iOS number input fix */
-    input[type="number"] {
-      -webkit-appearance: none;
-      -moz-appearance: textfield;
-    }
-
-    .summary-box {
-      background: linear-gradient(135deg, rgba(255, 215, 0, 0.15), rgba(255, 215, 0, 0.08));
-      border: 3px solid #ffd700;
-      border-radius: 15px;
-      padding: 20px;
-      margin-bottom: 20px;
-      position: sticky;
-      top: 10px;
-      z-index: 100;
-      backdrop-filter: blur(10px);
-    }
-
-    .summary-title {
-      font-size: 1.6em;
-      color: #ffd700;
-      margin-bottom: 15px;
-      text-align: center;
-      font-weight: bold;
-    }
-
-    .summary-grid {
-      display: grid;
-      grid-template-columns: repeat(2, 1fr);
-      gap: 12px;
-      text-align: center;
-    }
-
-    .summary-item {
-      padding: 12px 8px;
-      background: rgba(0,0,0,0.3);
-      border-radius: 10px;
-    }
-
-    .summary-item .value {
-      font-size: 2em;
-      font-weight: bold;
-      color: #4CAF50;
-      margin-bottom: 5px;
-      line-height: 1;
-    }
-
-    .summary-item .label {
-      font-size: 0.9em;
-      color: #ddd;
-      line-height: 1.2;
-    }
-
-    .actions {
-      position: fixed;
-      bottom: 0;
-      left: 0;
-      right: 0;
-      background: linear-gradient(180deg, transparent, #1a1a2e 20%);
-      padding: 20px 15px;
-      text-align: center;
-      z-index: 1000;
-    }
-
-    .btn {
-      width: 100%;
-      max-width: 500px;
-      padding: 22px 30px;
-      font-size: 1.8em;
-      font-weight: bold;
-      border: none;
-      border-radius: 15px;
-      cursor: pointer;
-      transition: all 0.2s;
-      box-shadow: 0 5px 25px rgba(0,0,0,0.5);
-      text-transform: uppercase;
-      letter-spacing: 1px;
-      touch-action: manipulation;
-    }
-
-    .btn:active {
-      transform: scale(0.95);
-      box-shadow: 0 3px 15px rgba(0,0,0,0.5);
-    }
-
-    .btn-primary {
-      background: linear-gradient(135deg, #4CAF50, #45a049);
-      color: white;
-    }
-
-    .message {
-      position: fixed;
-      top: 20px;
-      left: 50%;
-      transform: translateX(-50%);
-      padding: 20px 30px;
-      border-radius: 12px;
-      font-size: 1.4em;
-      font-weight: bold;
-      box-shadow: 0 5px 25px rgba(0,0,0,0.6);
-      z-index: 2000;
-      display: none;
-      max-width: 90%;
-      text-align: center;
-    }
-
-    .message.success {
-      background: #4CAF50;
-      color: white;
-    }
-
-    .message.error {
-      background: #f44336;
-      color: white;
-    }
-
-    /* Prevent zoom on iOS */
-    @supports (-webkit-touch-callout: none) {
-      input, select, textarea {
-        font-size: 16px;
-      }
-    }
-
-    /* Loading indicator */
-    .saving {
-      opacity: 0.6;
-      pointer-events: none;
-    }
-
-    /* Scroll behavior */
-    html {
-      scroll-behavior: smooth;
-    }
-
-    /* Better touch feedback */
-    .player-card:active {
-      transform: scale(0.98);
-    }
-
-    .remove-guest-btn {
-      padding: 8px 12px;
-      background: rgba(244, 67, 54, 0.8);
-      border: none;
-      border-radius: 8px;
-      font-size: 1.3em;
-      cursor: pointer;
-      margin-right: 10px;
-    }
-
-    .remove-guest-btn:active {
-      background: rgba(244, 67, 54, 1);
-      transform: scale(0.95);
-    }
-
-    .add-guest-btn {
-      width: 100%;
-      padding: 18px;
-      font-size: 1.3em;
-      background: linear-gradient(135deg, #667eea, #764ba2);
-      color: white;
-      border: none;
-      border-radius: 12px;
-      font-weight: bold;
-      cursor: pointer;
-      margin-bottom: 20px;
-      box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
-    }
-
-    .add-guest-btn:active {
-      transform: scale(0.95);
-    }
-  </style>
+  
+  <!-- CSS files in order -->
+  <link rel="stylesheet" href="css/main.css">
+  <link rel="stylesheet" href="css/layout.css">
+  <link rel="stylesheet" href="css/components.css">
 </head>
 <body>
+  <!-- Message Toast -->
   <div id="message" class="message"></div>
+
+  <!-- Guest Modal -->
+  <div id="guestModal" class="modal">
+    <div class="modal-content">
+      <div class="modal-title" id="modalTitle"><!-- From JS --></div>
+      <input type="text" id="guestNameInput" class="modal-input" placeholder="">
+      <div class="modal-buttons">
+        <button class="modal-btn confirm" onclick="confirmGuest()"><!-- From JS --></button>
+        <button class="modal-btn cancel" onclick="closeGuestModal()"><!-- From JS --></button>
+      </div>
+    </div>
+  </div>
 
   <div class="container">
     <!-- Header -->
     <div class="header">
-      <h1>🎲 רישום משחק 🎲</h1>
+      <h1 id="pageTitle"><!-- From JS --></h1>
       <div class="date" id="currentDate"></div>
     </div>
 
-    <!-- Info Bar -->
-    <div class="info-bar">
-      <div class="label">שחקנים הערב</div>
-      <div class="big-number" id="playerCount">0</div>
-    </div>
-
-    <!-- Summary -->
+    <!-- Summary Box -->
     <div class="summary-box">
-      <div class="summary-title">📊 סיכום</div>
+      <div class="summary-title" id="summaryTitle"><!-- From JS --></div>
       <div class="summary-grid">
         <div class="summary-item">
           <div class="value" id="totalPlayers">0</div>
-          <div class="label">שחקנים</div>
+          <div class="label" id="totalPlayersLabel"><!-- From JS --></div>
         </div>
         <div class="summary-item">
           <div class="value" id="totalMoney">₪0</div>
-          <div class="label">סך כסף</div>
+          <div class="label" id="totalMoneyLabel"><!-- From JS --></div>
         </div>
       </div>
     </div>
 
-    <!-- Quick Select -->
+    <!-- Quick Select Buttons -->
     <div class="quick-select">
-      <button onclick="selectAll()">✓ סמן הכל</button>
-      <button onclick="clearAll()">✗ נקה הכל</button>
+      <button onclick="selectAll()" id="selectAllBtn"><!-- From JS --></button>
+      <button onclick="clearAll()" id="clearAllBtn"><!-- From JS --></button>
     </div>
 
     <!-- Add Guest Button -->
-    <button class="add-guest-btn" onclick="addGuest()">➕ הוסף אורח</button>
+    <button class="add-guest-btn" onclick="addGuest()" id="addGuestBtn"><!-- From JS --></button>
 
     <!-- Players List -->
-    <div class="players-list" id="playersList"></div>
+    <div class="players-list" id="playersList">
+      <!-- Populated by JS -->
+    </div>
 
     <!-- Actions -->
     <div class="actions">
-      <button class="btn btn-primary" onclick="saveResults()">
-        ✅ סיימתי - שמור
+      <button class="btn btn-primary" onclick="saveGame()" id="saveBtn">
+        <!-- Text from JS -->
       </button>
     </div>
   </div>
 
-  <script>
-    // Club members with real details
-    const clubMembers = [
-      { id: 1, firstName: 'Tomer', lastName: 'Lidor', nickName: 'Lidor' },
-      { id: 2, firstName: 'Lior', lastName: 'Goldberg', nickName: 'Goldberg' },
-      { id: 3, firstName: 'Eran', lastName: 'Shuster', nickName: 'Shuster' },
-      { id: 4, firstName: 'Nati', lastName: 'Merfish', nickName: 'Merfish' },
-      { id: 5, firstName: 'Lior', lastName: 'Shmuli', nickName: 'Shmueli' },
-      { id: 6, firstName: 'Arik', lastName: 'Fridman', nickName: 'Arik' },
-      { id: 7, firstName: 'Danny', lastName: 'Silberstein', nickName: 'Danny' },
-      { id: 8, firstName: 'Avi', lastName: 'Strul', nickName: 'Strul' },
-      { id: 9, firstName: 'Dotan', lastName: 'Gad', nickName: 'Dotke' },
-      { id: 10, firstName: 'Doron', lastName: 'Lida', nickName: 'Doron' },
-      { id: 11, firstName: 'Ovi', lastName: 'Hamama', nickName: 'Ovi' },
-      { id: 12, firstName: 'Ex-pres', lastName: 'Frenkl', nickName: 'Pre&F' },
-      { id: 13, firstName: 'Moshe', lastName: 'Nachman', nickName: 'Moshe' },
-      { id: 14, firstName: 'Rami', lastName: 'Bareli', nickName: 'Rambo' },
-      { id: 15, firstName: 'Nir', lastName: 'Perach', nickName: 'Nir' },
-      { id: 16, firstName: 'Oded', lastName: 'Fisher', nickName: 'Shoded' },
-      { id: 17, firstName: 'Ran', lastName: 'Shacham', nickName: 'Ran S' },
-      { id: 18, firstName: 'Sharon', lastName: 'Cohen', nickName: 'Kov' },
-      { id: 19, firstName: 'Zohar', lastName: 'Alon', nickName: 'Zohar' }
-    ];
-
-    let gameData = {};
-    let guests = []; // Array for ad-hoc guests
-    let nextGuestId = 1001;
-
-    // Initialize
-    document.addEventListener('DOMContentLoaded', function() {
-      // Set current date
-      const today = new Date();
-      const dateStr = today.toLocaleDateString('he-IL', { 
-        weekday: 'long', 
-        year: 'numeric', 
-        month: 'long', 
-        day: 'numeric' 
-      });
-      document.getElementById('currentDate').textContent = dateStr;
-
-      // Initialize game data for club members
-      clubMembers.forEach(member => {
-        gameData[member.id] = {
-          id: member.id,
-          name: member.nickName,
-          fullName: `${member.firstName} ${member.lastName}`,
-          type: 'member',
-          playing: false,
-          payment: 200,
-          position: ''
-        };
-      });
-
-      // Load saved data if exists
-      loadFromLocalStorage();
-
-      renderPlayers();
-      updateSummary();
-    });
-
-    // Auto-save every time something changes
-    function autoSave() {
-      localStorage.setItem('currentGame', JSON.stringify({
-        date: new Date().toISOString(),
-        data: gameData,
-        guests: guests
-      }));
-    }
-
-    function loadFromLocalStorage() {
-      const saved = localStorage.getItem('currentGame');
-      if (saved) {
-        try {
-          const parsed = JSON.parse(saved);
-          const savedDate = new Date(parsed.date).toDateString();
-          const today = new Date().toDateString();
-          
-          if (savedDate === today) {
-            gameData = parsed.data;
-            guests = parsed.guests || [];
-            showMessage('📥 נתונים נטענו מהשמירה האחרונה', 'success');
-          }
-        } catch (e) {
-          console.log('No valid saved data');
-        }
-      }
-    }
-
-    function addGuest() {
-      const guestName = prompt('הזן שם האורח:');
-      if (guestName && guestName.trim()) {
-        const guestId = `guest_${nextGuestId++}`;
-        const guest = {
-          id: guestId,
-          name: guestName.trim(),
-          fullName: guestName.trim(),
-          type: 'guest',
-          playing: true,
-          payment: 200,
-          position: ''
-        };
-        guests.push(guest);
-        gameData[guestId] = guest;
-        autoSave();
-        renderPlayers();
-        updateSummary();
-        showMessage(`✅ ${guestName} נוסף כאורח`, 'success');
-      }
-    }
-
-    function removeGuest(guestId) {
-      if (confirm('האם להסיר אורח זה?')) {
-        guests = guests.filter(g => g.id !== guestId);
-        delete gameData[guestId];
-        autoSave();
-        renderPlayers();
-        updateSummary();
-      }
-    }
-
-    function renderPlayers() {
-      const list = document.getElementById('playersList');
-      list.innerHTML = '';
-
-      // Render club members
-      clubMembers.forEach(member => {
-        const data = gameData[member.id];
-        const card = createPlayerCard(data);
-        list.appendChild(card);
-      });
-
-      // Render guests
-      guests.forEach(guest => {
-        const data = gameData[guest.id];
-        const card = createPlayerCard(data, true);
-        list.appendChild(card);
-      });
-    }
-
-    function createPlayerCard(data, isGuest = false) {
-      const card = document.createElement('div');
-      card.className = 'player-card' + (data.playing ? ' selected' : '');
-      card.onclick = function(e) {
-        if (e.target.tagName !== 'INPUT' && e.target.tagName !== 'BUTTON') {
-          togglePlayer(data.id);
-        }
-      };
-
-      const displayName = isGuest ? `${data.name} 👤` : data.name;
-      const removeBtn = isGuest ? `<button class="remove-guest-btn" onclick="removeGuest('${data.id}'); event.stopPropagation();">🗑️</button>` : '';
-
-      card.innerHTML = `
-        <div class="player-checkbox">
-          <input type="checkbox" 
-                 id="check_${data.id}" 
-                 ${data.playing ? 'checked' : ''}
-                 onchange="togglePlayer('${data.id}')"
-                 onclick="event.stopPropagation()">
-          <label for="check_${data.id}">${displayName}</label>
-          ${removeBtn}
-        </div>
-        ${data.playing ? `
-          <div class="player-inputs">
-            <div class="input-box">
-              <label>כמה שילם?</label>
-              <input type="number" 
-                     inputmode="numeric"
-                     value="${data.payment}" 
-                     step="50"
-                     min="0"
-                     onchange="updatePayment('${data.id}', this.value)"
-                     onclick="event.stopPropagation(); this.select()">
-            </div>
-            <div class="input-box">
-              <label>מקום</label>
-              <input type="number" 
-                     inputmode="numeric"
-                     value="${data.position}" 
-                     placeholder="-"
-                     min="1"
-                     max="30"
-                     onchange="updatePosition('${data.id}', this.value)"
-                     onclick="event.stopPropagation(); this.select()">
-            </div>
-          </div>
-        ` : ''}
-      `;
-
-      return card;
-    }
-
-    function togglePlayer(id) {
-      gameData[id].playing = !gameData[id].playing;
-      if (!gameData[id].playing) {
-        gameData[id].payment = 200;
-        gameData[id].position = '';
-      }
-      autoSave();
-      renderPlayers();
-      updateSummary();
-    }
-
-    function updatePayment(id, value) {
-      gameData[id].payment = parseInt(value) || 0;
-      autoSave();
-      updateSummary();
-    }
-
-    function updatePosition(id, value) {
-      gameData[id].position = value ? parseInt(value) : '';
-      autoSave();
-      updateSummary();
-    }
-
-    function selectAll() {
-      Object.keys(gameData).forEach(id => {
-        gameData[id].playing = true;
-      });
-      autoSave();
-      renderPlayers();
-      updateSummary();
-    }
-
-    function clearAll() {
-      if (confirm('האם לנקות את כל הנתונים?')) {
-        Object.keys(gameData).forEach(id => {
-          gameData[id].playing = false;
-          gameData[id].payment = 200;
-          gameData[id].position = '';
-        });
-        guests = [];
-        localStorage.removeItem('currentGame');
-        renderPlayers();
-        updateSummary();
-      }
-    }
-
-    function updateSummary() {
-      const playingPlayers = Object.values(gameData).filter(p => p.playing);
-      const totalPlayers = playingPlayers.length;
-      const totalMoney = playingPlayers.reduce((sum, p) => sum + p.payment, 0);
-
-      document.getElementById('playerCount').textContent = totalPlayers;
-      document.getElementById('totalPlayers').textContent = totalPlayers;
-      document.getElementById('totalMoney').textContent = `₪${totalMoney}`;
-    }
-
-    function saveResults() {
-      const playingPlayers = Object.values(gameData).filter(p => p.playing);
-      
-      if (playingPlayers.length === 0) {
-        showMessage('❌ אין שחקנים נבחרים!', 'error');
-        return;
-      }
-
-      // Show saving state
-      document.querySelector('.btn-primary').classList.add('saving');
-      document.querySelector('.btn-primary').textContent = '⏳ שומר...';
-
-      // Prepare data
-      const results = {
-        date: new Date().toISOString().split('T')[0],
-        time: new Date().toLocaleTimeString('he-IL'),
-        players: playingPlayers.map(p => ({
-          name: p.name,
-          fullName: p.fullName || p.name,
-          type: p.type,
-          payment: p.payment,
-          position: p.position || null
-        })),
-        summary: {
-          totalPlayers: playingPlayers.length,
-          totalMoney: playingPlayers.reduce((sum, p) => sum + p.payment, 0),
-          members: playingPlayers.filter(p => p.type === 'member').length,
-          guests: playingPlayers.filter(p => p.type === 'guest').length
-        }
-      };
-
-      // Save to localStorage history
-      const gameHistory = JSON.parse(localStorage.getItem('pokerGames') || '[]');
-      gameHistory.push(results);
-      localStorage.setItem('pokerGames', JSON.stringify(gameHistory));
-
-      // Format for WhatsApp sharing
-      const whatsappText = formatForWhatsApp(results);
-      
-      // Try to share via native share if available
-      if (navigator.share) {
-        navigator.share({
-          title: 'רישום משחק פוקר',
-          text: whatsappText
-        }).then(() => {
-          showMessage('✅ הנתונים נשמרו ונשלחו!', 'success');
-          resetButton();
-        }).catch(() => {
-          // Fallback to copy
-          copyToClipboard(whatsappText);
-        });
-      } else {
-        // Fallback to clipboard
-        copyToClipboard(whatsappText);
-      }
-    }
-
-    function formatForWhatsApp(results) {
-      let text = `🎲 *רישום משחק פוקר - ${results.date}*\n`;
-      text += `⏰ ${results.time}\n`;
-      text += `${'='.repeat(30)}\n\n`;
-      text += `👥 *סה"כ שחקנים:* ${results.summary.totalPlayers}`;
-      if (results.summary.guests > 0) {
-        text += ` (${results.summary.members} חברים + ${results.summary.guests} אורחים)`;
-      }
-      text += `\n`;
-      text += `💰 *סה"כ כסף:* ₪${results.summary.totalMoney}\n\n`;
-      text += `*רשימת שחקנים:*\n`;
-      text += `${'-'.repeat(30)}\n`;
-      
-      results.players
-        .sort((a, b) => (a.position || 999) - (b.position || 999))
-        .forEach((player, index) => {
-          const num = player.position ? `🏆${player.position}` : `${index + 1}.`;
-          const guestMarker = player.type === 'guest' ? ' 👤' : '';
-          text += `${num} ${player.name}${guestMarker} - ₪${player.payment}\n`;
-        });
-
-      return text;
-    }
-
-    function copyToClipboard(text) {
-      // Create temporary textarea
-      const textarea = document.createElement('textarea');
-      textarea.value = text;
-      textarea.style.position = 'fixed';
-      textarea.style.opacity = '0';
-      document.body.appendChild(textarea);
-      textarea.select();
-      
-      try {
-        document.execCommand('copy');
-        showMessage('✅ הועתק ללוח! עכשיו תדביק בוואטסאפ', 'success');
-        
-        // Try to open WhatsApp
-        setTimeout(() => {
-          window.location.href = `whatsapp://send?text=${encodeURIComponent(text)}`;
-        }, 1500);
-      } catch (err) {
-        showMessage('❌ שגיאה בהעתקה', 'error');
-      } finally {
-        document.body.removeChild(textarea);
-        resetButton();
-      }
-    }
-
-    function resetButton() {
-      setTimeout(() => {
-        document.querySelector('.btn-primary').classList.remove('saving');
-        document.querySelector('.btn-primary').textContent = '✅ סיימתי - שמור';
-      }, 1000);
-    }
-
-    function showMessage(text, type) {
-      const msg = document.getElementById('message');
-      msg.textContent = text;
-      msg.className = `message ${type}`;
-      msg.style.display = 'block';
-      
-      setTimeout(() => {
-        msg.style.display = 'none';
-      }, 3000);
-    }
-
-    // Prevent accidental refresh
-    window.addEventListener('beforeunload', function(e) {
-      const playingPlayers = Object.values(gameData).filter(p => p.playing);
-      if (playingPlayers.length > 0) {
-        e.preventDefault();
-        e.returnValue = '';
-      }
-    });
-  </script>
+  <!-- JavaScript modules in dependency order -->
+  <script src="js/config.js" charset="utf-8"></script>
+  <script src="js/resources.js" charset="utf-8"></script>
+  <script src="js/utils/storage.js" charset="utf-8"></script>
+  <script src="js/utils/helpers.js" charset="utf-8"></script>
+  <script src="js/data/DataService.js" charset="utf-8"></script>
+  <script src="js/data/MockService.js" charset="utf-8"></script>
+  <script src="js/data/ApiService.js" charset="utf-8"></script>
+  <script src="js/models/Player.js" charset="utf-8"></script>
+  <script src="js/models/Rebuy.js" charset="utf-8"></script>
+  <script src="js/components/BaseComponent.js" charset="utf-8"></script>
+  <script src="js/game-app.js" charset="utf-8"></script>
 </body>
 </html>

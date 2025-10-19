@@ -1,0 +1,227 @@
+/* Main CSS - Base styles and CSS variables */
+:root {
+  /* Colors */
+  --color-primary: #ffd700;
+  --color-primary-dark: #d4af37;
+  --color-success: #4CAF50;
+  --color-success-dark: #45a049;
+  --color-danger: #f44336;
+  --color-danger-dark: #da190b;
+  --color-info: #667eea;
+  --color-info-dark: #764ba2;
+  
+  --color-background: #1a1a2e;
+  --color-background-light: #16213e;
+  --color-background-dark: #0f1624;
+  
+  --color-card-bg: rgba(255,255,255,0.1);
+  --color-card-bg-hover: rgba(255,255,255,0.15);
+  --color-card-border: rgba(255,255,255,0.2);
+  
+  --color-text-primary: #ffffff;
+  --color-text-secondary: #dddddd;
+  --color-text-muted: #aaaaaa;
+  --color-text-disabled: #888888;
+  
+  /* Spacing */
+  --spacing-xs: 5px;
+  --spacing-sm: 10px;
+  --spacing-md: 15px;
+  --spacing-lg: 20px;
+  --spacing-xl: 25px;
+  --spacing-xxl: 30px;
+  
+  /* Borders */
+  --border-radius-sm: 8px;
+  --border-radius: 12px;
+  --border-radius-lg: 15px;
+  --border-radius-xl: 20px;
+  
+  --border-width: 2px;
+  --border-width-thick: 3px;
+  
+  /* Fonts */
+  --font-family: Arial, sans-serif;
+  --font-size-base: 16px;
+  --font-size-sm: 0.9em;
+  --font-size-md: 1.1em;
+  --font-size-lg: 1.4em;
+  --font-size-xl: 1.8em;
+  --font-size-xxl: 2.2em;
+  --font-size-huge: 3.5em;
+  
+  /* Shadows */
+  --shadow-sm: 0 2px 8px rgba(0,0,0,0.3);
+  --shadow: 0 5px 20px rgba(0,0,0,0.5);
+  --shadow-lg: 0 8px 30px rgba(0,0,0,0.6);
+  
+  /* Transitions */
+  --transition-fast: 0.15s;
+  --transition: 0.2s;
+  --transition-slow: 0.3s;
+  
+  /* Z-index layers */
+  --z-sticky: 100;
+  --z-fixed: 1000;
+  --z-modal-backdrop: 2000;
+  --z-modal: 3000;
+}
+
+/* Reset and base styles */
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  -webkit-tap-highlight-color: transparent;
+}
+
+body {
+  font-family: var(--font-family);
+  font-size: var(--font-size-base);
+  background: var(--color-background);
+  color: var(--color-text-primary);
+  direction: rtl;
+  overflow-x: hidden;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* Prevent zoom on iOS */
+@supports (-webkit-touch-callout: none) {
+  input, select, textarea, button {
+    font-size: 16px !important;
+  }
+}
+
+/* Scroll behavior */
+html {
+  scroll-behavior: smooth;
+}
+
+/* Typography */
+h1, h2, h3, h4, h5, h6 {
+  font-weight: bold;
+  line-height: 1.2;
+}
+
+h1 { font-size: var(--font-size-xxl); }
+h2 { font-size: var(--font-size-xl); }
+h3 { font-size: var(--font-size-lg); }
+
+/* Links */
+a {
+  color: var(--color-primary);
+  text-decoration: none;
+  transition: color var(--transition);
+}
+
+a:hover {
+  color: var(--color-primary-dark);
+}
+
+/* Form elements base styles */
+input, select, textarea, button {
+  font-family: inherit;
+  font-size: inherit;
+}
+
+input:focus, select:focus, textarea:focus {
+  outline: none;
+}
+
+/* iOS number input fix */
+input[type="number"] {
+  -webkit-appearance: none;
+  -moz-appearance: textfield;
+}
+
+input[type="number"]::-webkit-inner-spin-button,
+input[type="number"]::-webkit-outer-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+/* Button reset */
+button {
+  border: none;
+  background: none;
+  cursor: pointer;
+  font-family: inherit;
+}
+
+/* Selection */
+::selection {
+  background: var(--color-primary);
+  color: var(--color-background);
+}
+
+/* Scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--color-background-dark);
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--color-primary);
+  border-radius: var(--border-radius);
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--color-primary-dark);
+}
+
+/* Loading/Disabled states */
+.saving {
+  opacity: 0.6;
+  pointer-events: none;
+}
+
+[disabled] {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/* Utility classes */
+.hidden {
+  display: none !important;
+}
+
+.visible {
+  display: block !important;
+}
+
+.text-center {
+  text-align: center;
+}
+
+.text-right {
+  text-align: right;
+}
+
+.text-left {
+  text-align: left;
+}
+
+.bold {
+  font-weight: bold;
+}
+
+.uppercase {
+  text-transform: uppercase;
+}
+
+/* Responsive helpers */
+@media (max-width: 600px) {
+  :root {
+    --font-size-base: 14px;
+  }
+}
+
+@media (min-width: 1200px) {
+  .container {
+    max-width: 1200px;
+  }
+}

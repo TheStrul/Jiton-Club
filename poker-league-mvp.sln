@@ -6,6 +6,43 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "api", "api", "{D82C56D6-B2C
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PokerLeague.Api", "api\PokerLeague.Api\PokerLeague.Api.csproj", "{05E296D8-4E39-DC63-7D1C-3707A54AD9C5}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "web", "web", "{A1B2C3D4-E5F6-4A5B-8C9D-1E2F3A4B5C6D}"
+	ProjectSection(SolutionItems) = preProject
+		web\easy-game-recorder.html = web\easy-game-recorder.html
+		web\host-console.html = web\host-console.html
+		web\index.html = web\index.html
+		web\rsvp.html = web\rsvp.html
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "web-js", "web-js", "{B2C3D4E5-F6A7-4B5C-9D1E-2F3A4B5C6D7E}"
+	ProjectSection(SolutionItems) = preProject
+		web\js\config.js = web\js\config.js
+		web\js\resources.js = web\js\resources.js
+		web\js\rsvp.js = web\js\rsvp.js
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "sql", "sql", "{C3D4E5F6-A7B8-4C5D-9E1F-3A4B5C6D7E8F}"
+	ProjectSection(SolutionItems) = preProject
+		sql\001_schema.sql = sql\001_schema.sql
+		sql\002_seed.sql = sql\002_seed.sql
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "infra", "infra", "{D4E5F6A7-B8C9-4D5E-9F1A-4B5C6D7E8F9A}"
+	ProjectSection(SolutionItems) = preProject
+		infra\main.bicep = infra\main.bicep
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".github", ".github", "{E5F6A7B8-C9D1-4E5F-9A1B-5C6D7E8F9A0B}"
+	ProjectSection(SolutionItems) = preProject
+		.github\copilot-instructions.md = .github\copilot-instructions.md
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{F6A7B8C9-D1E2-4F5A-9B1C-6D7E8F9A0B1C}"
+	ProjectSection(SolutionItems) = preProject
+		.gitignore = .gitignore
+		README.md = README.md
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -22,6 +59,7 @@ Global
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
 		{05E296D8-4E39-DC63-7D1C-3707A54AD9C5} = {D82C56D6-B2CD-F611-9E31-04638F7EC30E}
+		{B2C3D4E5-F6A7-4B5C-9D1E-2F3A4B5C6D7E} = {A1B2C3D4-E5F6-4A5B-8C9D-1E2F3A4B5C6D}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {97B3AD1A-A503-4050-AFA6-76D3150ECED4}
