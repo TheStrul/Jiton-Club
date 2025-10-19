@@ -1,0 +1,124 @@
+<!doctype html>
+<html lang="he" dir="rtl">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <title>קונסולת מארח — ליגת פוקר</title>
+  <style>
+    body { font-family: system-ui, Arial; margin: 16px; }
+    table { width:100%; border-collapse: collapse; }
+    th, td { border:1px solid #ddd; padding:8px; }
+    .row { display:flex; gap:8px; flex-wrap:wrap; margin-bottom:12px; }
+    input, select { padding:8px; }
+    button { padding:10px 14px; border:1px solid #ccc; border-radius:8px; font-size:16px; }
+  </style>
+</head>
+<body>
+  <h1>קונסולת מארח</h1>
+
+  <div class="row">
+    <label>Season ID: <input id="seasonId" type="number" value="1"/></label>
+    <label>תאריך האירוע: <input id="eventDate" type="date"/></label>
+    <label>Host Player ID: <input id="hostId" type="number"/></label>
+    <label>Keeper Player ID: <input id="keeperId" type="number"/></label>
+    <label>TournamentTypeId: <input id="ttId" type="number" value="2"/></label>
+    <label>Buy-In: <input id="buyIn" type="number" value="100"/></label>
+    <label>Rebuy Limit: <input id="rebuyLimit" type="number" value="2"/></label>
+    <button onclick="createEvent()">צור אירוע</button>
+  </div>
+
+  <div class="row">
+    <label>Event ID: <input id="eventId" type="number"/></label>
+    <button onclick="loadEvent()">טען אירוע</button>
+  </div>
+
+  <div id="eventInfo"></div>
+  <h2>נוכחות ותשלומים</h2>
+  <table>
+    <thead><tr><th>PlayerId</th><th>שם</th><th>BuyIns</th><th>Rebuys</th><th>Finish</th></tr></thead>
+    <tbody id="playersBody"></tbody>
+  </table>
+
+  <div class="row">
+    <button onclick="saveAttendance()">שמור נוכחות/תשלומים</button>
+    <button onclick="saveResults()">סגור ערב (חישוב פרסים)</button>
+  </div>
+
+  <script src="js/config.js"></script>
+  <script>
+    let currentPlayers = [];
+
+    async function createEvent(){
+      const seasonId = Number(document.getElementById('seasonId').value);
+      const eventDate = document.getElementById('eventDate').value || null;
+      const hostId = document.getElementById('hostId').value ? Number(document.getElementById('hostId').value): null;
+      const keeperId = document.getElementById('keeperId').value ? Number(document.getElementById('keeperId').value): null;
+      const ttId = document.getElementById('ttId').value ? Number(document.getElementById('ttId').value): null;
+      const buyIn = document.getElementById('buyIn').value ? Number(document.getElementById('buyIn').value): null;
+      const rebuyLimit = Number(document.getElementById('rebuyLimit').value);
+      const r = await fetch(`${API_BASE}/events/create`, {
+        method:'POST',
+        headers:{'Content-Type':'application/json'},
+        body: JSON.stringify({ seasonId, eventDate: eventDate? eventDate: null, hostPlayerId: hostId, tournamentTypeId: ttId, buyInAmount: buyIn, rebuyLimit, leagueKeeperPlayerId: keeperId })
+      });
+      const d = await r.json();
+      document.getElementById('eventId').value = d.eventId ?? d.EventId;
+      alert('נוצר אירוע #' + (d.eventId ?? d.EventId));
+    }
+
+    async function loadEvent(){
+      const eventId = Number(document.getElementById('eventId').value);
+      if(!eventId){ alert('נא למלא Event ID'); return; }
+      const r = await fetch(`${API_BASE}/events/${eventId}`);
+      const d = await r.json();
+      document.getElementById('eventInfo').innerText = JSON.stringify(d.evt ?? d, null, 2);
+      // build players table from invites list
+      const players = (d.invites || []).map(x => ({
+        playerId: x.PlayerId, fullName: x.FullName, buyIns: 1, rebuys: 0, finishPlace: null
+      }));
+      currentPlayers = players;
+      renderPlayers(players);
+    }
+
+    function renderPlayers(players){
+      const tb = document.getElementById('playersBody');
+      tb.innerHTML = '';
+      for(const p of players){
+        const tr = document.createElement('tr');
+        tr.innerHTML = `
+          <td>${p.playerId}</td>
+          <td>${p.fullName}</td>
+          <td><input type="number" value="${p.buyIns}" onchange="chg(${p.playerId}, 'buyIns', this.value)"/></td>
+          <td><input type="number" value="${p.rebuys}" onchange="chg(${p.playerId}, 'rebuys', this.value)"/></td>
+          <td><input type="number" value="${p.finishPlace ?? ''}" onchange="chg(${p.playerId}, 'finishPlace', this.value)"/></td>
+        `;
+        tb.appendChild(tr);
+      }
+    }
+
+    function chg(pid, field, val){
+      const p = currentPlayers.find(x=>x.playerId===pid);
+      if(!p) return;
+      p[field] = val===''? null : Number(val);
+    }
+
+    async function saveAttendance(){
+      const eventId = Number(document.getElementById('eventId').value);
+      const payload = currentPlayers.map(p => ({ playerId: p.playerId, buyIns: p.buyIns||0, rebuys: p.rebuys||0 }));
+      const r = await fetch(`${API_BASE}/events/${eventId}/attendance`, {
+        method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify(payload)
+      });
+      alert(r.ok? 'נשמר ✓' : 'שגיאה');
+    }
+
+    async function saveResults(){
+      const eventId = Number(document.getElementById('eventId').value);
+      const payload = currentPlayers.filter(p=>p.finishPlace!=null).map(p => ({ playerId: p.playerId, finishPlace: p.finishPlace }));
+      const r = await fetch(`${API_BASE}/events/${eventId}/results`, {
+        method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify(payload)
+      });
+      alert(r.ok? 'נסגר וחושב ✓' : 'שגיאה');
+    }
+  </script>
+</body>
+</html>

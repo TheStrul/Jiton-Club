@@ -1,0 +1,62 @@
+<!doctype html>
+<html lang="he" dir="rtl">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <title>דשבורד ליגה</title>
+  <style>
+    body { font-family: system-ui, Arial; margin: 16px; }
+    .row { display:flex; gap:16px; flex-wrap:wrap; }
+    .card { border:1px solid #ddd; border-radius:8px; padding:12px; margin-bottom:12px; }
+    canvas { max-width: 100%; }
+    input, button { padding:8px; }
+  </style>
+  <script src="js/config.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+  <h1>דשבורד ליגה</h1>
+  <div class="row card">
+    <label>Season ID: <input id="seasonId" type="number" value="1"/></label>
+    <button onclick="load()">טען</button>
+  </div>
+
+  <div class="row">
+    <div class="card" style="flex:1; min-width:320px;">
+      <h3>נקודות לפי שחקן</h3>
+      <canvas id="pointsChart"></canvas>
+    </div>
+    <div class="card" style="flex:1; min-width:320px;">
+      <h3>טבלה</h3>
+      <div id="table"></div>
+    </div>
+  </div>
+
+  <script>
+    let chart;
+    async function load(){
+      const seasonId = Number(document.getElementById('seasonId').value);
+      const r = await fetch(`${API_BASE}/league/${seasonId}/standings`);
+      const data = await r.json();
+      const labels = data.map(x=>x.fullName ?? x.FullName);
+      const points = data.map(x=>x.totalPoints ?? x.TotalPoints);
+
+      // table
+      const tdiv = document.getElementById('table');
+      tdiv.innerHTML = '<table><thead><tr><th>#</th><th>שם</th><th>נקודות</th></tr></thead><tbody>' +
+        data.map((x,i)=>`<tr><td>${i+1}</td><td>${x.fullName ?? x.FullName}</td><td>${x.totalPoints ?? x.TotalPoints}</td></tr>`).join('')
+        + '</tbody></table>';
+
+      // chart
+      const ctx = document.getElementById('pointsChart');
+      if(chart){ chart.destroy(); }
+      chart = new Chart(ctx, {
+        type: 'bar',
+        data: { labels, datasets: [{ label: 'נקודות', data: points }]},
+        options: { responsive:true, plugins:{ legend:{ display:false }}, scales:{ y:{ beginAtZero:true } } }
+      });
+    }
+    load();
+  </script>
+</body>
+</html>

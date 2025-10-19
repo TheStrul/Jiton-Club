@@ -1,0 +1,20 @@
+
+using Microsoft.Azure.Functions.Worker;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Configuration;
+using PokerLeague.Api.Data;
+
+var host = new HostBuilder()
+    .ConfigureFunctionsWorkerDefaults()
+    .ConfigureServices((ctx, services) =>
+    {
+        var conn = Environment.GetEnvironmentVariable("SqlConnection") ?? 
+                   ctx.Configuration.GetConnectionString("SqlConnection") ??
+                   "Server=(localdb)\\MSSQLLocalDB;Database=PokerLeague;Trusted_Connection=True;TrustServerCertificate=True;";
+        services.AddSingleton(new SqlRepository(conn));
+        services.AddSingleton<LeagueService>();
+    })
+    .Build();
+
+host.Run();

@@ -1,0 +1,43 @@
+<!doctype html>
+<html lang="he" dir="rtl">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <title>ליגת פוקר — RSVP</title>
+  <style>
+    body { font-family: system-ui, Arial; margin: 16px; }
+    .card { border:1px solid #ddd; border-radius:8px; padding:12px; margin-bottom:12px; }
+    button { padding:10px 14px; border:1px solid #ccc; border-radius:8px; font-size:16px; }
+    .row { display:flex; gap:8px; flex-wrap:wrap; }
+  </style>
+</head>
+<body>
+  <h1>אישור הגעה — ליגת פוקר</h1>
+  <div class="card">
+    <label>Event ID: <input id="eventId" type="number" /></label>
+    <label>Player ID: <input id="playerId" type="number" /></label>
+    <div class="row">
+      <button onclick="send('Yes')">מגיע</button>
+      <button onclick="send('Late')">מאחר</button>
+      <button onclick="send('No')">לא מגיע</button>
+      <button onclick="send('Maybe')">אולי</button>
+    </div>
+    <div id="status"></div>
+  </div>
+
+  <script src="js/config.js"></script>
+  <script>
+  async function send(response){
+    const eventId = document.getElementById('eventId').value;
+    const playerId = document.getElementById('playerId').value;
+    if(!eventId||!playerId){ alert('נא למלא Event ID ו-Player ID'); return; }
+    const r = await fetch(`${API_BASE}/events/${eventId}/rsvp`, {
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body: JSON.stringify({ playerId: Number(playerId), response })
+    });
+    document.getElementById('status').innerText = r.ok ? 'נרשם ✓' : 'שגיאה';
+  }
+  </script>
+</body>
+</html>

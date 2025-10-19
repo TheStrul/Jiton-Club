@@ -1,0 +1,94 @@
+
+-- 001_schema.sql
+SET ANSI_NULLS ON
+SET QUOTED_IDENTIFIER ON
+
+CREATE TABLE Players (
+    PlayerId INT IDENTITY(1,1) PRIMARY KEY,
+    FullName NVARCHAR(100) NOT NULL,
+    Phone NVARCHAR(50) NULL,
+    IsActive BIT NOT NULL DEFAULT 1
+);
+
+CREATE TABLE Seasons (
+    SeasonId INT IDENTITY(1,1) PRIMARY KEY,
+    Name NVARCHAR(100) NOT NULL,
+    StartDate DATE NOT NULL,
+    EndDate DATE NULL,
+    Weeks INT NULL,
+    HasPlayoff BIT NOT NULL DEFAULT 1
+);
+
+CREATE TABLE TournamentTypes (
+    TournamentTypeId INT IDENTITY(1,1) PRIMARY KEY,
+    Name NVARCHAR(50) NOT NULL,
+    DefaultBuyIn DECIMAL(10,2) NOT NULL DEFAULT 100,
+    DefaultRebuy DECIMAL(10,2) NOT NULL DEFAULT 100,
+    StructureJson NVARCHAR(MAX) NULL
+);
+
+CREATE TABLE Events (
+    EventId INT IDENTITY(1,1) PRIMARY KEY,
+    SeasonId INT NOT NULL FOREIGN KEY REFERENCES Seasons(SeasonId),
+    EventDate DATE NOT NULL,
+    HostPlayerId INT NULL FOREIGN KEY REFERENCES Players(PlayerId),
+    TournamentTypeId INT NULL FOREIGN KEY REFERENCES TournamentTypes(TournamentTypeId),
+    BuyInAmount DECIMAL(10,2) NOT NULL DEFAULT 100,
+    RebuyLimit INT NOT NULL DEFAULT 2,
+    LeagueKeeperPlayerId INT NULL FOREIGN KEY REFERENCES Players(PlayerId),
+    Notes NVARCHAR(500) NULL
+);
+
+CREATE UNIQUE INDEX IX_Events_SeasonDate ON Events(SeasonId, EventDate);
+
+CREATE TABLE EventInvites (
+    InviteId INT IDENTITY(1,1) PRIMARY KEY,
+    EventId INT NOT NULL FOREIGN KEY REFERENCES Events(EventId),
+    PlayerId INT NOT NULL FOREIGN KEY REFERENCES Players(PlayerId),
+    RsvpToken UNIQUEIDENTIFIER NOT NULL DEFAULT NEWID(),
+    SentAt DATETIME2 NULL
+);
+
+CREATE TABLE EventResponses (
+    ResponseId INT IDENTITY(1,1) PRIMARY KEY,
+    InviteId INT NOT NULL FOREIGN KEY REFERENCES EventInvites(InviteId),
+    Response NVARCHAR(20) NOT NULL, -- Yes/Late/No/Maybe
+    RespondedAt DATETIME2 NOT NULL DEFAULT SYSUTCDATETIME(),
+    Source NVARCHAR(20) NOT NULL DEFAULT 'Web'
+);
+
+CREATE TABLE EventPlayers (
+    EventPlayerId INT IDENTITY(1,1) PRIMARY KEY,
+    EventId INT NOT NULL FOREIGN KEY REFERENCES Events(EventId),
+    PlayerId INT NOT NULL FOREIGN KEY REFERENCES Players(PlayerId),
+    BuyIns INT NOT NULL DEFAULT 1,
+    Rebuys INT NOT NULL DEFAULT 0,
+    TotalPaid DECIMAL(10,2) NULL, -- Will be calculated in application logic
+    FinishPlace INT NULL,
+    PrizeWon DECIMAL(10,2) NULL,
+    Knockouts INT NULL
+);
+
+CREATE TABLE LeagueLedger (
+    LedgerId INT IDENTITY(1,1) PRIMARY KEY,
+    EventId INT NOT NULL FOREIGN KEY REFERENCES Events(EventId),
+    AmountIn DECIMAL(10,2) NOT NULL DEFAULT 0,
+    AmountOut DECIMAL(10,2) NOT NULL DEFAULT 0,
+    KeeperPlayerId INT NULL FOREIGN KEY REFERENCES Players(PlayerId),
+    Note NVARCHAR(200) NULL
+);
+
+CREATE TABLE PayoutRules (
+    RuleId INT IDENTITY(1,1) PRIMARY KEY,
+    SeasonId INT NOT NULL FOREIGN KEY REFERENCES Seasons(SeasonId),
+    RuleType NVARCHAR(20) NOT NULL, -- 'Payout' | 'Points'
+    RuleJson NVARCHAR(MAX) NOT NULL
+);
+
+CREATE TABLE SheetsSyncLog (
+    SyncId INT IDENTITY(1,1) PRIMARY KEY,
+    EventId INT NOT NULL FOREIGN KEY REFERENCES Events(EventId),
+    Status NVARCHAR(20) NOT NULL,
+    Details NVARCHAR(MAX) NULL,
+    SyncedAt DATETIME2 NOT NULL DEFAULT SYSUTCDATETIME()
+);

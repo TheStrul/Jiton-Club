@@ -1,0 +1,777 @@
+<!DOCTYPE html>
+<html dir="rtl" lang="he">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>??? ?????? - Jiton Poker Club</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: linear-gradient(135deg, #0f2027 0%, #203a43 50%, #2c5364 100%);
+      color: #fff;
+      padding: 20px;
+      direction: rtl;
+      min-height: 100vh;
+    }
+
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+
+    .header {
+      text-align: center;
+      margin-bottom: 40px;
+      padding: 30px;
+      background: rgba(255,255,255,0.05);
+      border-radius: 20px;
+      backdrop-filter: blur(10px);
+      box-shadow: 0 8px 32px rgba(0,0,0,0.3);
+    }
+
+    .header h1 {
+      font-size: 3em;
+      margin-bottom: 10px;
+      text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
+      background: linear-gradient(45deg, #ffd700, #ffed4e);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .header .subtitle {
+      font-size: 1.2em;
+      color: #aaa;
+    }
+
+    .section {
+      background: rgba(255,255,255,0.08);
+      border-radius: 15px;
+      padding: 25px;
+      margin-bottom: 25px;
+      backdrop-filter: blur(10px);
+      box-shadow: 0 8px 32px rgba(0,0,0,0.2);
+      border: 1px solid rgba(255,255,255,0.1);
+    }
+
+    .section-title {
+      font-size: 1.8em;
+      color: #ffd700;
+      margin-bottom: 20px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .section-title .icon {
+      font-size: 1.2em;
+    }
+
+    /* Tournament Settings */
+    .settings-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 20px;
+      margin-bottom: 20px;
+    }
+
+    .input-group {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .input-group label {
+      font-weight: bold;
+      color: #ffd700;
+      font-size: 1.1em;
+    }
+
+    .input-group input,
+    .input-group select {
+      padding: 12px;
+      border: 2px solid rgba(255,255,255,0.2);
+      border-radius: 8px;
+      background: rgba(255,255,255,0.1);
+      color: #fff;
+      font-size: 1.1em;
+      transition: all 0.3s;
+    }
+
+    .input-group input:focus,
+    .input-group select:focus {
+      outline: none;
+      border-color: #ffd700;
+      background: rgba(255,255,255,0.15);
+    }
+
+    .input-group input::placeholder {
+      color: rgba(255,255,255,0.5);
+    }
+
+    /* Add Player Section */
+    .add-player-bar {
+      display: flex;
+      gap: 15px;
+      align-items: flex-end;
+      flex-wrap: wrap;
+    }
+
+    .add-player-bar .input-group {
+      flex: 1;
+      min-width: 200px;
+    }
+
+    .btn {
+      padding: 14px 30px;
+      font-size: 1.1em;
+      font-weight: bold;
+      border: none;
+      border-radius: 10px;
+      cursor: pointer;
+      transition: all 0.3s;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+    }
+
+    .btn:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 6px 20px rgba(0,0,0,0.4);
+    }
+
+    .btn:active {
+      transform: translateY(-1px);
+    }
+
+    .btn-primary {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+    }
+
+    .btn-success {
+      background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);
+      color: white;
+    }
+
+    .btn-add {
+      background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+      color: white;
+      min-height: 48px;
+    }
+
+    .btn-remove {
+      background: linear-gradient(135deg, #ff6b6b 0%, #ee5a6f 100%);
+      color: white;
+      padding: 8px 15px;
+      font-size: 0.9em;
+    }
+
+    /* Players Table */
+    .players-table {
+      width: 100%;
+      border-collapse: separate;
+      border-spacing: 0 10px;
+      margin-top: 20px;
+    }
+
+    .players-table thead th {
+      background: rgba(255, 215, 0, 0.2);
+      padding: 15px;
+      text-align: center;
+      font-size: 1.1em;
+      color: #ffd700;
+      border: none;
+      position: sticky;
+      top: 0;
+      z-index: 10;
+    }
+
+    .players-table tbody tr {
+      background: rgba(255,255,255,0.05);
+      transition: all 0.3s;
+    }
+
+    .players-table tbody tr:hover {
+      background: rgba(255,255,255,0.1);
+      transform: scale(1.02);
+    }
+
+    .players-table tbody td {
+      padding: 15px;
+      text-align: center;
+      border: none;
+    }
+
+    .players-table tbody tr td:first-child {
+      border-radius: 10px 0 0 10px;
+    }
+
+    .players-table tbody tr td:last-child {
+      border-radius: 0 10px 10px 0;
+    }
+
+    .player-name {
+      font-size: 1.2em;
+      font-weight: bold;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .player-badge {
+      display: inline-block;
+      padding: 4px 8px;
+      border-radius: 5px;
+      font-size: 0.7em;
+      font-weight: bold;
+      text-transform: uppercase;
+    }
+
+    .badge-tournament {
+      background: #4CAF50;
+      color: white;
+    }
+
+    .badge-casual {
+      background: #2196F3;
+      color: white;
+    }
+
+    .badge-guest {
+      background: #FF9800;
+      color: white;
+    }
+
+    .players-table input[type="number"] {
+      width: 100%;
+      max-width: 120px;
+      padding: 10px;
+      border: 2px solid rgba(255,255,255,0.2);
+      border-radius: 8px;
+      background: rgba(255,255,255,0.1);
+      color: #fff;
+      font-size: 1.1em;
+      text-align: center;
+      transition: all 0.3s;
+    }
+
+    .players-table input[type="number"]:focus {
+      outline: none;
+      border-color: #ffd700;
+      background: rgba(255,255,255,0.15);
+    }
+
+    /* Summary Panel */
+    .summary-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 20px;
+      margin-top: 20px;
+    }
+
+    .summary-card {
+      background: linear-gradient(135deg, rgba(255,255,255,0.1) 0%, rgba(255,255,255,0.05) 100%);
+      padding: 25px;
+      border-radius: 15px;
+      text-align: center;
+      border: 2px solid rgba(255,255,255,0.1);
+      transition: all 0.3s;
+    }
+
+    .summary-card:hover {
+      transform: translateY(-5px);
+      border-color: #ffd700;
+      box-shadow: 0 10px 30px rgba(255, 215, 0, 0.3);
+    }
+
+    .summary-card .value {
+      font-size: 3em;
+      font-weight: bold;
+      color: #ffd700;
+      margin: 10px 0;
+      text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+    }
+
+    .summary-card .label {
+      font-size: 1.2em;
+      color: #aaa;
+      text-transform: uppercase;
+      letter-spacing: 2px;
+    }
+
+    /* Results Table */
+    .results-table {
+      margin-top: 20px;
+    }
+
+    .results-table table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+
+    .results-table th,
+    .results-table td {
+      padding: 15px;
+      text-align: right;
+      border-bottom: 1px solid rgba(255,255,255,0.1);
+    }
+
+    .results-table th {
+      background: rgba(255, 215, 0, 0.2);
+      color: #ffd700;
+      font-size: 1.1em;
+    }
+
+    .results-table tr:hover {
+      background: rgba(255,255,255,0.05);
+    }
+
+    .place-badge {
+      display: inline-block;
+      padding: 8px 15px;
+      border-radius: 20px;
+      font-weight: bold;
+      font-size: 1.1em;
+    }
+
+    .place-1 {
+      background: linear-gradient(135deg, #FFD700, #FFA500);
+      color: #000;
+    }
+
+    .place-2 {
+      background: linear-gradient(135deg, #C0C0C0, #A8A8A8);
+      color: #000;
+    }
+
+    .place-3 {
+      background: linear-gradient(135deg, #CD7F32, #A0522D);
+      color: #fff;
+    }
+
+    /* Action Buttons */
+    .actions {
+      display: flex;
+      gap: 20px;
+      justify-content: center;
+      margin-top: 30px;
+      flex-wrap: wrap;
+    }
+
+    /* Responsive */
+    @media (max-width: 768px) {
+      .header h1 {
+        font-size: 2em;
+      }
+
+      .players-table {
+        font-size: 0.9em;
+      }
+
+      .summary-card .value {
+        font-size: 2em;
+      }
+    }
+
+    /* Empty state */
+    .empty-state {
+      text-align: center;
+      padding: 60px 20px;
+      color: #888;
+    }
+
+    .empty-state .icon {
+      font-size: 5em;
+      margin-bottom: 20px;
+    }
+
+    .empty-state p {
+      font-size: 1.3em;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <!-- Header -->
+    <div class="header">
+      <h1>?? ??? ?????? ??</h1>
+      <div class="subtitle">Jiton Poker Club - Tournament Recorder</div>
+    </div>
+
+    <!-- Tournament Settings -->
+    <div class="section">
+      <h2 class="section-title">
+        <span class="icon">??</span>
+        ?????? ??????
+      </h2>
+      <div class="settings-grid">
+        <div class="input-group">
+          <label>????? ???????</label>
+          <input type="date" id="tournamentDate" />
+        </div>
+        <div class="input-group">
+          <label>Buy-In (?)</label>
+          <input type="number" id="buyInAmount" value="200" min="50" step="50" />
+        </div>
+        <div class="input-group">
+          <label>?? ???????</label>
+          <input type="text" id="tournamentName" placeholder="?????? ????? ????" />
+        </div>
+      </div>
+    </div>
+
+    <!-- Add Player Section -->
+    <div class="section">
+      <h2 class="section-title">
+        <span class="icon">?</span>
+        ???? ????
+      </h2>
+      <div class="add-player-bar">
+        <div class="input-group" style="flex: 2;">
+          <label>??? ??? ??????</label>
+          <select id="clubMemberSelect">
+            <option value="">-- ??? ???? --</option>
+          </select>
+        </div>
+        <div class="input-group">
+          <label>?? ?? ????</label>
+          <input type="text" id="guestName" placeholder="?? ???" />
+        </div>
+        <button class="btn btn-add" onclick="addPlayer()">???? ???????</button>
+      </div>
+    </div>
+
+    <!-- Players in Tournament -->
+    <div class="section">
+      <h2 class="section-title">
+        <span class="icon">??</span>
+        ?????? ??????? (<span id="playerCount">0</span>)
+      </h2>
+      
+      <div id="playersTableContainer">
+        <div class="empty-state">
+          <div class="icon">??</div>
+          <p>????? ?? ????? ?????? ???????</p>
+          <p style="font-size: 0.9em; margin-top: 10px;">???? ?????? ?????? ?????? ???? ??????? ?? ??????</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Summary -->
+    <div class="section">
+      <h2 class="section-title">
+        <span class="icon">??</span>
+        ?????
+      </h2>
+      <div class="summary-grid">
+        <div class="summary-card">
+          <div class="label">?????</div>
+          <div class="value" id="totalHeads">0</div>
+        </div>
+        <div class="summary-card">
+          <div class="label">?? ????</div>
+          <div class="value" id="totalPool">?0</div>
+        </div>
+        <div class="summary-card">
+          <div class="label">?????? ??????</div>
+          <div class="value" id="finishedPlayers">0</div>
+        </div>
+        <div class="summary-card">
+          <div class="label">Buy-Ins ????</div>
+          <div class="value" id="totalBuyIns">0</div>
+        </div>
+      </div>
+
+      <!-- Results Table -->
+      <div class="results-table" id="resultsSection" style="display: none;">
+        <h3 style="color: #ffd700; margin: 30px 0 15px;">?? ?????? ??????</h3>
+        <table>
+          <thead>
+            <tr>
+              <th>????</th>
+              <th>????</th>
+              <th>???</th>
+              <th>?????</th>
+            </tr>
+          </thead>
+          <tbody id="resultsTableBody">
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- Actions -->
+    <div class="actions">
+      <button class="btn btn-success" onclick="viewResults()">??? ??? ??????</button>
+      <button class="btn btn-primary" onclick="exportData()">?? ???? ??????</button>
+    </div>
+  </div>
+
+  <script>
+    // Mock club members data - Replace with API call later
+    const clubMembers = [
+      { id: 1, name: '?????', isTournamentPlayer: true },
+      { id: 2, name: '????', isTournamentPlayer: true },
+      { id: 3, name: '????', isTournamentPlayer: true },
+      { id: 4, name: '?????', isTournamentPlayer: true },
+      { id: 5, name: '??????', isTournamentPlayer: true },
+      { id: 6, name: '???', isTournamentPlayer: true },
+      { id: 7, name: '?????', isTournamentPlayer: true },
+      { id: 8, name: '????', isTournamentPlayer: true },
+      { id: 9, name: '???', isTournamentPlayer: true },
+      { id: 10, name: '??????', isTournamentPlayer: true },
+      { id: 11, name: '?????', isTournamentPlayer: false },
+      { id: 12, name: '???', isTournamentPlayer: true },
+      { id: 13, name: '?????', isTournamentPlayer: true },
+      { id: 14, name: '??????', isTournamentPlayer: true },
+      { id: 15, name: '?????', isTournamentPlayer: true },
+      { id: 16, name: '?????', isTournamentPlayer: true },
+      { id: 17, name: '????', isTournamentPlayer: true },
+      { id: 18, name: '???', isTournamentPlayer: true },
+      { id: 19, name: '???', isTournamentPlayer: true }
+    ];
+
+    let tournamentPlayers = [];
+    let nextGuestId = 1000;
+
+    // Initialize
+    document.addEventListener('DOMContentLoaded', function() {
+      // Set today's date
+      document.getElementById('tournamentDate').valueAsDate = new Date();
+      
+      // Populate club members dropdown
+      const select = document.getElementById('clubMemberSelect');
+      clubMembers.forEach(member => {
+        const option = document.createElement('option');
+        option.value = member.id;
+        option.textContent = `${member.name}${member.isTournamentPlayer ? ' ?' : ''}`;
+        option.dataset.name = member.name;
+        option.dataset.isTournament = member.isTournamentPlayer;
+        select.appendChild(option);
+      });
+    });
+
+    function addPlayer() {
+      const select = document.getElementById('clubMemberSelect');
+      const guestNameInput = document.getElementById('guestName');
+      const buyInAmount = parseInt(document.getElementById('buyInAmount').value) || 200;
+
+      let player = null;
+
+      // Check if club member selected
+      if (select.value) {
+        const selectedOption = select.options[select.selectedIndex];
+        player = {
+          id: select.value,
+          name: selectedOption.dataset.name,
+          type: selectedOption.dataset.isTournament === 'true' ? 'tournament' : 'casual',
+          isGuest: false,
+          payment: buyInAmount,
+          position: null
+        };
+        select.value = '';
+      } 
+      // Check if guest name entered
+      else if (guestNameInput.value.trim()) {
+        player = {
+          id: `guest_${nextGuestId++}`,
+          name: guestNameInput.value.trim(),
+          type: 'guest',
+          isGuest: true,
+          payment: buyInAmount,
+          position: null
+        };
+        guestNameInput.value = '';
+      } else {
+        alert('?? ????? ??? ?????? ?? ????? ?? ????');
+        return;
+      }
+
+      // Check if player already added
+      if (tournamentPlayers.find(p => p.id === player.id)) {
+        alert('???? ?? ??? ???? ???????');
+        return;
+      }
+
+      tournamentPlayers.push(player);
+      renderPlayersTable();
+      updateSummary();
+    }
+
+    function removePlayer(playerId) {
+      if (confirm('??? ????? ???? ?? ?????????')) {
+        tournamentPlayers = tournamentPlayers.filter(p => p.id !== playerId);
+        renderPlayersTable();
+        updateSummary();
+      }
+    }
+
+    function updatePayment(playerId, amount) {
+      const player = tournamentPlayers.find(p => p.id === playerId);
+      if (player) {
+        player.payment = parseInt(amount) || 0;
+        updateSummary();
+      }
+    }
+
+    function updatePosition(playerId, position) {
+      const player = tournamentPlayers.find(p => p.id === playerId);
+      if (player) {
+        player.position = position ? parseInt(position) : null;
+        updateSummary();
+      }
+    }
+
+    function renderPlayersTable() {
+      const container = document.getElementById('playersTableContainer');
+      
+      if (tournamentPlayers.length === 0) {
+        container.innerHTML = `
+          <div class="empty-state">
+            <div class="icon">??</div>
+            <p>????? ?? ????? ?????? ???????</p>
+            <p style="font-size: 0.9em; margin-top: 10px;">???? ?????? ?????? ?????? ???? ??????? ?? ??????</p>
+          </div>
+        `;
+        return;
+      }
+
+      let html = `
+        <table class="players-table">
+          <thead>
+            <tr>
+              <th>????</th>
+              <th>???</th>
+              <th>????? (?)</th>
+              <th>???? ????</th>
+              <th>??????</th>
+            </tr>
+          </thead>
+          <tbody>
+      `;
+
+      tournamentPlayers.forEach(player => {
+        const badgeClass = player.type === 'tournament' ? 'badge-tournament' : 
+                          player.type === 'casual' ? 'badge-casual' : 'badge-guest';
+        const badgeText = player.type === 'tournament' ? '????' : 
+                         player.type === 'casual' ? '??????' : '????';
+
+        html += `
+          <tr>
+            <td>
+              <div class="player-name">
+                ${player.name}
+              </div>
+            </td>
+            <td>
+              <span class="player-badge ${badgeClass}">${badgeText}</span>
+            </td>
+            <td>
+              <input type="number" 
+                     value="${player.payment}" 
+                     min="0" 
+                     step="50"
+                     onchange="updatePayment('${player.id}', this.value)">
+            </td>
+            <td>
+              <input type="number" 
+                     value="${player.position || ''}" 
+                     min="1" 
+                     placeholder="-"
+                     onchange="updatePosition('${player.id}', this.value)">
+            </td>
+            <td>
+              <button class="btn btn-remove" onclick="removePlayer('${player.id}')">???</button>
+            </td>
+          </tr>
+        `;
+      });
+
+      html += `
+          </tbody>
+        </table>
+      `;
+
+      container.innerHTML = html;
+    }
+
+    function updateSummary() {
+      const totalHeads = tournamentPlayers.length;
+      const totalPool = tournamentPlayers.reduce((sum, p) => sum + p.payment, 0);
+      const buyInAmount = parseInt(document.getElementById('buyInAmount').value) || 200;
+      const totalBuyIns = Math.floor(totalPool / buyInAmount);
+      const finishedPlayers = tournamentPlayers.filter(p => p.position !== null).length;
+
+      document.getElementById('playerCount').textContent = totalHeads;
+      document.getElementById('totalHeads').textContent = totalHeads;
+      document.getElementById('totalPool').textContent = `?${totalPool}`;
+      document.getElementById('totalBuyIns').textContent = totalBuyIns;
+      document.getElementById('finishedPlayers').textContent = finishedPlayers;
+    }
+
+    function viewResults() {
+      const resultsSection = document.getElementById('resultsSection');
+      const resultsBody = document.getElementById('resultsTableBody');
+      
+      const playersWithPosition = tournamentPlayers
+        .filter(p => p.position !== null)
+        .sort((a, b) => a.position - b.position);
+
+      if (playersWithPosition.length === 0) {
+        alert('?? ????? ?????? ?????');
+        return;
+      }
+
+      let html = '';
+      playersWithPosition.forEach(player => {
+        const badgeText = player.type === 'tournament' ? '????' : 
+                         player.type === 'casual' ? '??????' : '????';
+        const placeClass = player.position <= 3 ? `place-${player.position}` : '';
+        
+        html += `
+          <tr>
+            <td><span class="place-badge ${placeClass}">#${player.position}</span></td>
+            <td>${player.name}</td>
+            <td>${badgeText}</td>
+            <td>?${player.payment}</td>
+          </tr>
+        `;
+      });
+
+      resultsBody.innerHTML = html;
+      resultsSection.style.display = 'block';
+      resultsSection.scrollIntoView({ behavior: 'smooth' });
+    }
+
+    function exportData() {
+      const tournamentData = {
+        date: document.getElementById('tournamentDate').value,
+        name: document.getElementById('tournamentName').value,
+        buyIn: document.getElementById('buyInAmount').value,
+        players: tournamentPlayers,
+        summary: {
+          totalHeads: tournamentPlayers.length,
+          totalPool: tournamentPlayers.reduce((sum, p) => sum + p.payment, 0),
+          finishedPlayers: tournamentPlayers.filter(p => p.position !== null).length
+        }
+      };
+
+      const jsonStr = JSON.stringify(tournamentData, null, 2);
+      console.log('Tournament Data:', jsonStr);
+      
+      // Create download
+      const blob = new Blob([jsonStr], { type: 'application/json' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `tournament_${tournamentData.date}.json`;
+      a.click();
+      
+      alert('??????? ????? ??????! ?');
+    }
+  </script>
+</body>
+</html>
