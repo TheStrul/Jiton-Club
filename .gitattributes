@@ -1,0 +1,43 @@
+# Git attributes file - forces proper handling of text files
+# See https://git-scm.com/docs/gitattributes
+
+# Auto detect text files and perform LF normalization
+* text=auto
+
+# Force UTF-8 encoding for all text files
+*.js text eol=crlf encoding=UTF-8
+*.html text eol=crlf encoding=UTF-8
+*.css text eol=crlf encoding=UTF-8
+*.json text eol=crlf encoding=UTF-8
+*.md text eol=crlf encoding=UTF-8
+
+# SQL files with Hebrew text - use UTF-8 with BOM
+*.sql text eol=crlf encoding=UTF-8-BOM
+
+# Specific language resource files
+*.he.js text eol=crlf encoding=UTF-8
+*.en.js text eol=crlf encoding=UTF-8
+
+# Binary files (don't modify)
+*.png binary
+*.jpg binary
+*.jpeg binary
+*.gif binary
+*.ico binary
+*.pdf binary
+*.zip binary
+*.exe binary
+*.dll binary
+
+# Web fonts
+*.woff binary
+*.woff2 binary
+*.ttf binary
+*.otf binary
+
+# Project files
+*.csproj text eol=crlf encoding=UTF-8
+*.sln text eol=crlf encoding=UTF-8
+
+# Configuration files
+*.config text eol=crlf encoding=UTF-8

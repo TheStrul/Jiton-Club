@@ -1,0 +1,21 @@
+{
+    "files.encoding": "utf8",
+    "files.autoGuessEncoding": false,
+    "files.defaultLanguage": "javascript",
+    "[javascript]": {
+        "files.encoding": "utf8"
+    },
+    "[html]": {
+        "files.encoding": "utf8"
+    },
+    "[css]": {
+        "files.encoding": "utf8"
+    },
+    "[sql]": {
+        "files.encoding": "utf8bom"
+    },
+    "files.associations": {
+        "*.he.js": "javascript",
+        "*.en.js": "javascript"
+    }
+}
