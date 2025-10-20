@@ -10,7 +10,7 @@ class Player {
     this.userType = data.userType || 'Tournament'; // 'Tournament' | 'Casual' | 'Guest' | 'Inactive'
     this.type = data.type || 'member'; // 'member' | 'guest' (for frontend compatibility)
   }
-  
+
   /**
    * Get first name from full name
    * @returns {string} First name
@@ -18,7 +18,7 @@ class Player {
   getFirstName() {
     return this.fullName.split(' ')[0] || this.fullName;
   }
-  
+
   /**
    * Get last name from full name
    * @returns {string} Last name
@@ -27,7 +27,7 @@ class Player {
     const parts = this.fullName.split(' ');
     return parts.slice(1).join(' ') || '';
   }
-  
+
   /**
    * Get nickname based on player's language preference
    * @returns {string} Nickname in player's preferred language
@@ -35,7 +35,7 @@ class Player {
   get nickName() {
     return this.languagePreference === 'he' ? this.hebrewNickName : this.englishNickName;
   }
-  
+
   /**
    * Get display name with type indicator
    * @returns {string} Display name with icon
@@ -51,7 +51,7 @@ class Player {
     }
     return `${this.nickName}${icon}`;
   }
-  
+
   /**
    * Check if player is a guest
    * @returns {boolean}
@@ -59,7 +59,7 @@ class Player {
   get isGuest() {
     return this.type === 'guest' || this.userType === 'Guest';
   }
-  
+
   /**
    * Check if player is a club member
    * @returns {boolean}
@@ -67,7 +67,7 @@ class Player {
   get isMember() {
     return this.type === 'member';
   }
-  
+
   /**
    * Check if player is a tournament player
    * @returns {boolean}
@@ -75,7 +75,7 @@ class Player {
   get isTournamentPlayer() {
     return this.userType === 'Tournament';
   }
-  
+
   /**
    * Check if player is a casual player
    * @returns {boolean}
@@ -83,7 +83,7 @@ class Player {
   get isCasualPlayer() {
     return this.userType === 'Casual';
   }
-  
+
   /**
    * Convert to JSON object
    * @returns {Object} JSON representation
@@ -99,7 +99,7 @@ class Player {
       type: this.type
     };
   }
-  
+
   /**
    * Create Player instance from JSON
    * @param {Object} json - JSON object
@@ -108,7 +108,7 @@ class Player {
   static fromJSON(json) {
     return new Player(json);
   }
-  
+
   /**
    * Create guest player
    * @param {string} name - Guest name

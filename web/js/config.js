@@ -1,11 +1,20 @@
 // Configuration for different environments
 const CONFIG = {
-  // Environment: 'development' | 'production'
-  environment: 'development',
-  
-  // API Base URL (update for production)
-  API_BASE: 'http://localhost:7071',
-  
+  // Auto-detect environment based on hostname
+  environment: window.location.hostname === 'localhost' ? 'development' : 'production',
+
+  // API Base URL (auto-configured based on environment)
+  get API_BASE() {
+    if (this.environment === 'development') {
+      return 'http://localhost:7071';
+    } else {
+      // In production, replace with your actual Azure Function App URL
+      // This should match the Function App name from your Bicep deployment
+      const functionAppName = 'your-function-app-name'; // Update this during deployment
+      return `https://${functionAppName}.azurewebsites.net`;
+    }
+  },
+
   // Authentication
   auth: {
     enabled: true,
@@ -13,7 +22,7 @@ const CONFIG = {
     autoLogoutWarning: 60000, // 1 minute warning
     cookieName: 'poker_session'
   },
-  
+
   // Feature flags
   features: {
     autoSave: true,
@@ -21,7 +30,7 @@ const CONFIG = {
     mockData: false, // Use mock data instead of API
     debugMode: true
   },
-  
+
   // Storage keys
   storage: {
     rebuyData: 'rebuyData',
@@ -31,7 +40,7 @@ const CONFIG = {
     sessionToken: 'poker_session_token',
     userData: 'poker_user_data'
   },
-  
+
   // Default values
   defaults: {
     rebuyType: 'regular',
@@ -39,7 +48,7 @@ const CONFIG = {
     language: 'he',
     seasonId: 2 // Current active season
   },
-  
+
   // Server settings (for development)
   server: {
     port: 8000,

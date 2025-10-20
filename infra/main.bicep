@@ -88,6 +88,13 @@ resource func 'Microsoft.Web/sites@2023-01-01' = {
     serverFarmId: plan.id
     siteConfig: {
       linuxFxVersion: 'DOTNET|8.0'
+      cors: {
+        allowedOrigins: [
+          'https://${swa.properties.defaultHostname}'
+          'https://*.azurestaticapps.net'  // Allow any Static Web App subdomain
+        ]
+        supportCredentials: false
+      }
       appSettings: [
         { name: 'FUNCTIONS_WORKER_RUNTIME', value: 'dotnet-isolated' }
         { name: 'AzureWebJobsStorage', value: st.listKeys().keys[0].value }

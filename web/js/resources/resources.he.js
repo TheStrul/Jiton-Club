@@ -19,14 +19,14 @@ Resources.register('he', {
     login: 'התחברות למערכת',
     mainMenu: 'תפריט ראשי - מועדון ג\'יטון'
   },
-  
+
   sections: {
     addPlayer: 'הוסף שחקן לרשימת הערב',
     rebuyListTitle: 'רשימת ריביי',
     scoreListTitle: 'רשימת תוצאות',
     playersTonight: 'שחקני הערב'
   },
-  
+
   buttons: {
     save: 'שמור',
     cancel: 'ביטול',
@@ -45,7 +45,7 @@ Resources.register('he', {
     logout: 'התנתק',
     backToMenu: 'חזור לתפריט'
   },
-  
+
   labels: {
     selectPlayer: 'בחר שחקן',
     playerName: 'שם שחקן',
@@ -65,14 +65,14 @@ Resources.register('he', {
     username: 'שם משתמש',
     password: 'סיסמה'
   },
-  
+
   rebuyTypes: {
     none: 'ללא',
     regular: 'רגיל',
     house: 'בית',
     dotke: 'דותקה'
   },
-  
+
   messages: {
     playerAdded: '{name} נוסף לרשימה',
     guestAdded: '{name} נוסף כאורח',
@@ -91,7 +91,7 @@ Resources.register('he', {
     welcome: 'שלום אבי!',
     menuFooter: 'מועדון ג\'יטון © 2025 - כל הזכויות שמורות'
   },
-  
+
   errors: {
     noPlayerSelected: 'לא נבחר שחקן',
     playerAlreadyInList: 'שחקן כבר ברשימה',
@@ -105,7 +105,7 @@ Resources.register('he', {
     invalidCredentials: 'חסר שם משתמש או סיסמה',
     wrongCredentials: 'שם משתמש או סיסמה שגויים! נותרו {remaining} ניסיונות'
   },
-  
+
   confirmations: {
     removePlayer: 'להסיר שחקן זה מהרשימה?',
     removeEntry: 'למחוק רישום זה?',
@@ -114,7 +114,7 @@ Resources.register('he', {
     removeGuest: 'להסיר אורח זה?',
     logout: 'להתנתק מהמערכת?'
   },
-  
+
   placeholders: {
     selectPlayer: 'בחר שחקן או אורח...',
     selectPlayerForRebuy: 'בחר שחקן לריביי',
@@ -123,13 +123,13 @@ Resources.register('he', {
     enterGuestName: 'הכנס שם אורח',
     positionPlaceholder: '-'
   },
-  
+
   emptyStates: {
     noRebuys: 'אין רישומי ריביי',
     noScores: 'אין רישומי תוצאות',
     noPlayers: 'אין שחקנים'
   },
-  
+
   icons: {
     game: '🎲',
     guest: '👤',
@@ -149,14 +149,14 @@ Resources.register('he', {
     settings: '⚙️',
     logout: '🚪'
   },
-  
+
   dateFormats: {
     weekday: 'long',
     year: 'numeric',
     month: 'long',
     day: 'numeric'
   },
-  
+
   menu: {
     recordGame: 'רישום משחק',
     recordGameDesc: 'רשום משחק חדש עם כל השחקנים, ריביי ותוצאות',

@@ -19,14 +19,14 @@ Resources.register('en', {
     login: 'System Login',
     mainMenu: 'Main Menu - Jiton Club'
   },
-  
+
   sections: {
     addPlayer: 'Add Player to Tonight\'s List',
     rebuyListTitle: 'Rebuy List',
     scoreListTitle: 'Results List',
     playersTonight: 'Tonight\'s Players'
   },
-  
+
   buttons: {
     save: 'Save',
     cancel: 'Cancel',
@@ -45,7 +45,7 @@ Resources.register('en', {
     logout: 'Logout',
     backToMenu: 'Back to Menu'
   },
-  
+
   labels: {
     selectPlayer: 'Select Player',
     playerName: 'Player Name',
@@ -65,14 +65,14 @@ Resources.register('en', {
     username: 'Username',
     password: 'Password'
   },
-  
+
   rebuyTypes: {
     none: 'None',
     regular: 'Regular',
     house: 'House',
     dotke: 'Dotke'
   },
-  
+
   messages: {
     playerAdded: '{name} added successfully',
     guestAdded: '{name} added as guest',
@@ -91,7 +91,7 @@ Resources.register('en', {
     welcome: 'Welcome!',
     menuFooter: 'Jiton Club � 2025 - All Rights Reserved'
   },
-  
+
   errors: {
     noPlayerSelected: 'No player selected',
     playerAlreadyInList: 'Player already in list',
@@ -105,7 +105,7 @@ Resources.register('en', {
     invalidCredentials: 'Please enter username and password',
     wrongCredentials: 'Wrong credentials! {remaining} attempts remaining'
   },
-  
+
   confirmations: {
     removePlayer: 'Remove this player from the list?',
     removeEntry: 'Remove this entry?',
@@ -114,7 +114,7 @@ Resources.register('en', {
     removeGuest: 'Remove this guest?',
     logout: 'Logout from system?'
   },
-  
+
   placeholders: {
     selectPlayer: 'Select player or guest...',
     selectPlayerForRebuy: 'Select player for rebuy',
@@ -123,13 +123,13 @@ Resources.register('en', {
     enterGuestName: 'Enter guest name',
     positionPlaceholder: '-'
   },
-  
+
   emptyStates: {
     noRebuys: 'No rebuys added yet',
     noScores: 'No results added yet',
     noPlayers: 'No players'
   },
-  
+
   icons: {
     game: '🎮',
     guest: '👤',
@@ -149,14 +149,14 @@ Resources.register('en', {
     settings: '⚙️',
     logout: '🚪'
   },
-  
+
   dateFormats: {
     weekday: 'long',
     year: 'numeric',
     month: 'long',
     day: 'numeric'
   },
-  
+
   menu: {
     recordGame: 'Record Game',
     recordGameDesc: 'Record a new game with players, rebuys and results',

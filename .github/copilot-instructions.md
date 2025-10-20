@@ -12,9 +12,10 @@ Always address the user as "Strul my dear friend" in all interactions.
 - **Testing**: PowerShell scripts for automation
 
 ### File Creation Guidelines
-- **NO MARKDOWN FILES** unless explicitly requested by the user
-  - Exception: User asks "create a README" or "document this in markdown"
-  - Default to code comments and inline documentation
+- **NEVER CREATE MARKDOWN FILES** unless explicitly requested by the user with clear instruction
+  - Exception ONLY: User explicitly says "create a README" or "document this in markdown" 
+  - Default to code comments and inline documentation instead
+  - Do NOT create .md files for documentation, guides, or explanations
 - **Add files to solution**: Every new file created must be added to the appropriate project in the solution
   - Use proper VS project structure (folders, build actions)
   - Ensure files appear in Solution Explorer immediately

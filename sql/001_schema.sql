@@ -1,5 +1,5 @@
 -- 001_schema.sql
--- Poker League MVP - Complete Database Schema  
+-- Poker League MVP - Complete Database Schema
 -- Includes: League tables + Authentication system (consolidated Players table)
 
 -- Create database if it doesn't exist
@@ -28,7 +28,7 @@ GO
 -- Players table with nickname support, user type, and authentication
 CREATE TABLE Players (
     PlayerId INT IDENTITY(1,1) PRIMARY KEY,
-    
+
     -- Player Info
     FullName NVARCHAR(100) NOT NULL,
     NickName NVARCHAR(50) NULL,
@@ -38,7 +38,7 @@ CREATE TABLE Players (
     LanguagePreference NVARCHAR(2) NOT NULL DEFAULT 'he', -- 'he' for Hebrew, 'en' for English
     UserType NVARCHAR(20) NOT NULL DEFAULT 'ClubMember', -- Admin, LeaguePlayer, ClubMember, Guest
     IsActive BIT NOT NULL DEFAULT 1,
-    
+
     -- Authentication Info (optional - only for users who can log in)
     Username NVARCHAR(50) NULL UNIQUE,
     PasswordHash NVARCHAR(255) NULL,
@@ -244,13 +244,13 @@ CREATE PROCEDURE sp_ValidateSession
 AS
 BEGIN
     SET NOCOUNT ON;
-    
+
     DECLARE @Now DATETIME2 = SYSUTCDATETIME();
     DECLARE @PlayerId INT;
     DECLARE @Username NVARCHAR(50);
     DECLARE @UserType NVARCHAR(20);
-    
-    SELECT 
+
+    SELECT
         @PlayerId = p.PlayerId,
         @Username = p.Username,
         @UserType = p.UserType
@@ -261,19 +261,19 @@ BEGIN
         AND s.ExpiresAt > @Now
         AND p.IsActive = 1
         AND p.Username IS NOT NULL;
-    
+
     IF @PlayerId IS NOT NULL
     BEGIN
         UPDATE UserSessions
         SET LastActivityAt = @Now,
             ExpiresAt = DATEADD(MINUTE, @ExtendMinutes, @Now)
         WHERE SessionToken = @SessionToken;
-        
+
         UPDATE Players
         SET LastLoginAt = @Now
         WHERE PlayerId = @PlayerId;
-        
-        SELECT 
+
+        SELECT
             @PlayerId AS PlayerId,
             @Username AS Username,
             @UserType AS UserType,
@@ -292,17 +292,17 @@ CREATE PROCEDURE sp_CleanupExpiredSessions
 AS
 BEGIN
     SET NOCOUNT ON;
-    
+
     UPDATE UserSessions
     SET IsActive = 0
     WHERE ExpiresAt < SYSUTCDATETIME()
         AND IsActive = 1;
-    
+
     DELETE FROM LoginAttempts
     WHERE AttemptedAt < DATEADD(DAY, -30, SYSUTCDATETIME());
-    
+
     DELETE FROM PasswordResetTokens
-    WHERE IsUsed = 1 
+    WHERE IsUsed = 1
         AND UsedAt < DATEADD(DAY, -7, SYSUTCDATETIME());
 END
 GO
@@ -315,16 +315,16 @@ BEGIN
     DECLARE @IsAllowed BIT = 1;
     DECLARE @FailedAttempts INT;
     DECLARE @LastHour DATETIME2 = DATEADD(HOUR, -1, SYSUTCDATETIME());
-    
+
     SELECT @FailedAttempts = COUNT(*)
     FROM LoginAttempts
     WHERE Username = @Username
         AND Success = 0
         AND AttemptedAt > @LastHour;
-    
+
     IF @FailedAttempts >= 5
         SET @IsAllowed = 0;
-    
+
     RETURN @IsAllowed;
 END
 GO
