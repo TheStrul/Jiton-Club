@@ -6,6 +6,7 @@ class Player {
     this.phone = data.phone || null;
     this.hebrewNickName = data.hebrewNickName || this.getFirstName();
     this.englishNickName = data.englishNickName || this.getFirstName();
+    this.languagePreference = data.languagePreference || 'he'; // Player's preferred language
     this.userType = data.userType || 'Tournament'; // 'Tournament' | 'Casual' | 'Guest' | 'Inactive'
     this.type = data.type || 'member'; // 'member' | 'guest' (for frontend compatibility)
   }
@@ -28,12 +29,11 @@ class Player {
   }
   
   /**
-   * Get nickname based on current language
-   * @returns {string} Nickname in current language
+   * Get nickname based on player's language preference
+   * @returns {string} Nickname in player's preferred language
    */
   get nickName() {
-    const lang = Resources.current || 'he';
-    return lang === 'he' ? this.hebrewNickName : this.englishNickName;
+    return this.languagePreference === 'he' ? this.hebrewNickName : this.englishNickName;
   }
   
   /**
@@ -43,11 +43,11 @@ class Player {
   get displayName() {
     let icon = '';
     if (this.isGuest) {
-      icon = ' ??';
+      icon = ' 👤';
     } else if (this.isTournamentPlayer) {
-      icon = ' ??';
+      icon = ' 🏆';
     } else if (this.isCasualPlayer) {
-      icon = ' ??';
+      icon = ' 🎲';
     }
     return `${this.nickName}${icon}`;
   }

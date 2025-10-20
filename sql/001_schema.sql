@@ -1,6 +1,22 @@
 -- 001_schema.sql
--- Poker League MVP - Complete Database Schema
--- Includes: League tables + Authentication system
+-- Poker League MVP - Complete Database Schema  
+-- Includes: League tables + Authentication system (consolidated Players table)
+
+-- Create database if it doesn't exist
+IF NOT EXISTS (SELECT name FROM sys.databases WHERE name = N'PokerLeague')
+BEGIN
+    CREATE DATABASE PokerLeague;
+    PRINT 'Database PokerLeague created successfully';
+END
+ELSE
+BEGIN
+    PRINT 'Database PokerLeague already exists';
+END
+GO
+
+USE PokerLeague;
+GO
+
 SET ANSI_NULLS ON
 SET QUOTED_IDENTIFIER ON
 GO
@@ -9,19 +25,32 @@ GO
 -- CORE LEAGUE TABLES
 -- ============================================
 
--- Players table with nickname support and user type
+-- Players table with nickname support, user type, and authentication
 CREATE TABLE Players (
     PlayerId INT IDENTITY(1,1) PRIMARY KEY,
+    
+    -- Player Info
     FullName NVARCHAR(100) NOT NULL,
     NickName NVARCHAR(50) NULL,
     HebrewNickName NVARCHAR(50) NULL,
     Phone NVARCHAR(50) NULL,
+    Email NVARCHAR(100) NULL,
+    LanguagePreference NVARCHAR(2) NOT NULL DEFAULT 'he', -- 'he' for Hebrew, 'en' for English
     UserType NVARCHAR(20) NOT NULL DEFAULT 'ClubMember', -- Admin, LeaguePlayer, ClubMember, Guest
-    IsActive BIT NOT NULL DEFAULT 1
+    IsActive BIT NOT NULL DEFAULT 1,
+    
+    -- Authentication Info (optional - only for users who can log in)
+    Username NVARCHAR(50) NULL UNIQUE,
+    PasswordHash NVARCHAR(255) NULL,
+    Salt NVARCHAR(255) NULL,
+    CreatedAt DATETIME2 NOT NULL DEFAULT SYSUTCDATETIME(),
+    LastLoginAt DATETIME2 NULL
 );
 
+CREATE UNIQUE INDEX IX_Players_Username ON Players(Username) WHERE Username IS NOT NULL;
 CREATE INDEX IX_Players_NickName ON Players(NickName);
 CREATE INDEX IX_Players_UserType ON Players(UserType);
+CREATE INDEX IX_Players_Email ON Players(Email) WHERE Email IS NOT NULL;
 GO
 
 -- Seasons
@@ -140,32 +169,13 @@ CREATE INDEX IX_SheetsSyncLog_Event ON SheetsSyncLog(EventId);
 GO
 
 -- ============================================
--- AUTHENTICATION TABLES
+-- AUTHENTICATION TABLES (simplified)
 -- ============================================
 
--- Users for authentication
-CREATE TABLE Users (
-    UserId INT IDENTITY(1,1) PRIMARY KEY,
-    Username NVARCHAR(50) NOT NULL UNIQUE,
-    PasswordHash NVARCHAR(255) NOT NULL,
-    Salt NVARCHAR(255) NOT NULL,
-    PlayerId INT NULL FOREIGN KEY REFERENCES Players(PlayerId),
-    Role NVARCHAR(20) NOT NULL DEFAULT 'Player', -- Player, Host, Admin
-    IsActive BIT NOT NULL DEFAULT 1,
-    CreatedAt DATETIME2 NOT NULL DEFAULT SYSUTCDATETIME(),
-    LastLoginAt DATETIME2 NULL,
-    Email NVARCHAR(100) NULL,
-    PhoneNumber NVARCHAR(20) NULL
-);
-
-CREATE INDEX IX_Users_Username ON Users(Username);
-CREATE INDEX IX_Users_PlayerId ON Users(PlayerId);
-GO
-
--- User sessions
+-- User sessions - now references Players directly
 CREATE TABLE UserSessions (
     SessionId INT IDENTITY(1,1) PRIMARY KEY,
-    UserId INT NOT NULL FOREIGN KEY REFERENCES Users(UserId),
+    PlayerId INT NOT NULL FOREIGN KEY REFERENCES Players(PlayerId),
     SessionToken UNIQUEIDENTIFIER NOT NULL DEFAULT NEWID() UNIQUE,
     RefreshToken UNIQUEIDENTIFIER NOT NULL DEFAULT NEWID() UNIQUE,
     CreatedAt DATETIME2 NOT NULL DEFAULT SYSUTCDATETIME(),
@@ -177,7 +187,7 @@ CREATE TABLE UserSessions (
 );
 
 CREATE INDEX IX_UserSessions_SessionToken ON UserSessions(SessionToken) WHERE IsActive = 1;
-CREATE INDEX IX_UserSessions_UserId ON UserSessions(UserId);
+CREATE INDEX IX_UserSessions_PlayerId ON UserSessions(PlayerId);
 GO
 
 -- Login attempts (rate limiting)
@@ -196,7 +206,7 @@ GO
 -- Password reset tokens
 CREATE TABLE PasswordResetTokens (
     TokenId INT IDENTITY(1,1) PRIMARY KEY,
-    UserId INT NOT NULL FOREIGN KEY REFERENCES Users(UserId),
+    PlayerId INT NOT NULL FOREIGN KEY REFERENCES Players(PlayerId),
     ResetToken UNIQUEIDENTIFIER NOT NULL DEFAULT NEWID() UNIQUE,
     CreatedAt DATETIME2 NOT NULL DEFAULT SYSUTCDATETIME(),
     ExpiresAt DATETIME2 NOT NULL,
@@ -210,7 +220,7 @@ GO
 -- Audit log
 CREATE TABLE AuditLog (
     AuditId INT IDENTITY(1,1) PRIMARY KEY,
-    UserId INT NULL FOREIGN KEY REFERENCES Users(UserId),
+    PlayerId INT NULL FOREIGN KEY REFERENCES Players(PlayerId),
     Action NVARCHAR(100) NOT NULL,
     EntityType NVARCHAR(50) NULL,
     EntityId INT NULL,
@@ -219,7 +229,7 @@ CREATE TABLE AuditLog (
     Timestamp DATETIME2 NOT NULL DEFAULT SYSUTCDATETIME()
 );
 
-CREATE INDEX IX_AuditLog_UserId ON AuditLog(UserId, Timestamp);
+CREATE INDEX IX_AuditLog_PlayerId ON AuditLog(PlayerId, Timestamp);
 CREATE INDEX IX_AuditLog_Action ON AuditLog(Action, Timestamp);
 GO
 
@@ -236,38 +246,37 @@ BEGIN
     SET NOCOUNT ON;
     
     DECLARE @Now DATETIME2 = SYSUTCDATETIME();
-    DECLARE @UserId INT;
     DECLARE @PlayerId INT;
     DECLARE @Username NVARCHAR(50);
-    DECLARE @Role NVARCHAR(20);
+    DECLARE @UserType NVARCHAR(20);
     
     SELECT 
-        @UserId = u.UserId,
-        @PlayerId = u.PlayerId,
-        @Username = u.Username,
-        @Role = u.Role
+        @PlayerId = p.PlayerId,
+        @Username = p.Username,
+        @UserType = p.UserType
     FROM UserSessions s
-    INNER JOIN Users u ON s.UserId = u.UserId
+    INNER JOIN Players p ON s.PlayerId = p.PlayerId
     WHERE s.SessionToken = @SessionToken
         AND s.IsActive = 1
         AND s.ExpiresAt > @Now
-        AND u.IsActive = 1;
+        AND p.IsActive = 1
+        AND p.Username IS NOT NULL;
     
-    IF @UserId IS NOT NULL
+    IF @PlayerId IS NOT NULL
     BEGIN
         UPDATE UserSessions
         SET LastActivityAt = @Now,
             ExpiresAt = DATEADD(MINUTE, @ExtendMinutes, @Now)
         WHERE SessionToken = @SessionToken;
         
-        UPDATE Users
+        UPDATE Players
         SET LastLoginAt = @Now
-        WHERE UserId = @UserId;
+        WHERE PlayerId = @PlayerId;
         
         SELECT 
-            @UserId AS UserId,
+            @PlayerId AS PlayerId,
             @Username AS Username,
-            @Role AS Role,
+            @UserType AS UserType,
             @PlayerId AS PlayerId,
             1 AS IsValid;
     END
@@ -320,10 +329,15 @@ BEGIN
 END
 GO
 
-PRINT 'Schema created successfully - League tables + Authentication system';
+PRINT 'Schema created successfully - Consolidated League + Authentication system';
 PRINT '';
 PRINT 'Tables created:';
-PRINT '  - 9 League tables (Players, Events, etc.)';
-PRINT '  - 6 Authentication tables (Users, Sessions, etc.)';
+PRINT '  - 9 League tables (Consolidated Players with auth, Events, etc.)';
+PRINT '  - 5 Authentication tables (Sessions, AuditLog, etc.)';
 PRINT '  - 2 Stored procedures';
 PRINT '  - 1 Function';
+PRINT '';
+PRINT 'Key improvements:';
+PRINT '  - Players table includes authentication (no separate Users table)';
+PRINT '  - UserSessions references Players.PlayerId directly';
+PRINT '  - Simplified schema with better performance';

@@ -24,6 +24,11 @@ Always address the user as "Strul my dear friend" in all interactions.
   - Focus on current requirements, not legacy support
 - **File Encoding**: All SQL files with Hebrew text must be saved as UTF-8 with BOM
   - Verify Hebrew characters display correctly in seed scripts
+- **Database Schema Changes**: 
+  - NEVER create ALTER TABLE scripts or migration scripts
+  - Always modify the main schema file `sql/001_schema.sql` directly
+  - Update seed data in `sql/002_seed.sql` accordingly
+  - Ask user to delete and recreate database when schema changes are needed
 
 ### File Organization
 ```

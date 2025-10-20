@@ -15,15 +15,19 @@ class ApiService extends DataService {
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`);
       }
-      const players = await response.json();
+      const data = await response.json();
+      
+      // Extract players array from API response (could be direct array or wrapped in 'value' property)
+      const players = data.value || data;
       
       // Map to our Player model format
       return players.map(p => ({
         id: p.PlayerId || p.playerId,
         fullName: p.FullName || p.fullName,
         phone: p.Phone || p.phone,
-        hebrewNickName: p.HebrewNickName || p.hebrewNickName || (p.FullName || p.fullName || '').split(' ')[0],
-        englishNickName: (p.FullName || p.fullName || '').split(' ')[0], // Extract first name as English nickname
+        hebrewNickName: p.HebrewNickName || p.hebrewNickName || (p.NickName || p.nickName) || (p.FullName || p.fullName || '').split(' ')[0],
+        englishNickName: p.NickName || p.nickName || (p.FullName || p.fullName || '').split(' ')[0], // Use NickName from API or extract first name
+        languagePreference: p.LanguagePreference || p.languagePreference || 'he', // User's preferred language
         userType: p.UserType || p.userType || 'Tournament', // 'Tournament' | 'Casual' | 'Guest' | 'Inactive'
         type: 'member',
         isActive: true
