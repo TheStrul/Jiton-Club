@@ -39,8 +39,8 @@ Resources.register('en', {
     clearAll: 'Clear All',
     finished: 'Finish - Save',
     addGuest: 'Add Guest',
-    addRebuy: '?? Add Rebuy Entry',
-    addScore: '?? Add Result Entry',
+    addRebuy: '🔄 Add Rebuy Entry',
+    addScore: '🏆 Add Result Entry',
     login: 'Login',
     logout: 'Logout',
     backToMenu: 'Back to Menu'
@@ -89,7 +89,7 @@ Resources.register('en', {
     loginFooter: 'Jiton Club - Game Management System',
     lockoutExpired: 'Lockout period expired',
     welcome: 'Welcome!',
-    menuFooter: 'Jiton Club � 2025 - All Rights Reserved'
+    menuFooter: 'Jiton Club � 2025 - All Rights Reserved'
   },
   
   errors: {
@@ -131,23 +131,23 @@ Resources.register('en', {
   },
   
   icons: {
-    game: '??',
-    guest: '??',
-    money: '??',
-    stats: '??',
-    regular: '??',
-    house: '??',
-    dotke: '??',
-    trophy: '??',
-    trash: '???',
+    game: '🎮',
+    guest: '👤',
+    money: '💰',
+    stats: '📊',
+    regular: '🔄',
+    house: '🏠',
+    dotke: '🎯',
+    trophy: '🏆',
+    trash: '🗑️',
     plus: '+',
-    check: '?',
-    cross: '?',
-    empty: '?',
-    none: '?',
-    history: '??',
-    settings: '??',
-    logout: '??'
+    check: '✅',
+    cross: '❌',
+    empty: '⚪',
+    none: '⭕',
+    history: '📝',
+    settings: '⚙️',
+    logout: '🚪'
   },
   
   dateFormats: {
